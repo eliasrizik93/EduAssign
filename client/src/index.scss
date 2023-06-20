@@ -3,9 +3,10 @@
 @tailwind utilities;
 
 body {
-  @apply h-full bg-gray-100 overflow-x-hidden;
+  @apply h-full bg-gray-100 overflow-x-hidden overflow-y-hidden;
 }
 
-html {
-  @apply h-full;
+html,
+#root {
+  @apply h-full overflow-x-hidden overflow-y-hidden;
 }
