@@ -1,8 +1,7 @@
 import React, { ChangeEvent, useState } from 'react';
-import TextField from "@material-ui/core/TextField";
+import TextField from '@material-ui/core/TextField';
 import SearchIcon from '@material-ui/icons/Search';
-
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   input: {
@@ -21,33 +20,36 @@ const useStyles = makeStyles((theme) => ({
   },
   labelFocused: {},
   errorMessage: {
-    color:'red'
-  }
+    color: 'red',
+  },
 }));
 
-const REGEX_CHECK = /\d|[^\w\s]/ //No numbers or special characters
+const REGEX_CHECK = /\d|[^\w\s]/; // No numbers or special characters
 
 const SideBarMessages = () => {
   const [inputIsFocused, setInputIsFocused] = useState<boolean>(false)
   const [searchValue, setSearchValue] = useState<string>('')
-  const [errorMessage, setErrormessage] = useState<string>('')
+  const [errorMessage, setErrorMessage] = useState<string>('')
   const classes = useStyles();
 
   const handleInputFocus = () => {
-    setInputIsFocused(true)
-  }
+    setInputIsFocused(true);
+  };
+
   const handleInputBlur = () => {
-    setInputIsFocused(false)
-  }
+    setInputIsFocused(false);
+  };
+
   const checkSearchValue = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target
-    setSearchValue(value)
+    const { value } = event.target;
+    setSearchValue(value);
+
     if (REGEX_CHECK.test(value)) {
-      setErrormessage('Invalid input')
+      setErrorMessage('Invalid input');
     } else {
-      setErrormessage('')
+      setErrorMessage('');
     }
-  }
+  };
 
   return (
     <div className="w-1/5 pr-2 pl-5 pt-3">
@@ -72,7 +74,7 @@ const SideBarMessages = () => {
           },
         }}
       />
-      {errorMessage?.length > 0 && <div className={classes.errorMessage}>{errorMessage}</div>}
+      {errorMessage && <div className={classes.errorMessage}>{errorMessage}</div>}
       <div className="h-full">Messages</div>
     </div>
   );
