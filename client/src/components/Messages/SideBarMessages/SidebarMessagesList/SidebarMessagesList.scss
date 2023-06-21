@@ -1,0 +1,27 @@
+$scrollbar-width: 7px;
+$scrollbar-track-color: #f1f1f1;
+$scrollbar-thumb-color: #888;
+$scrollbar-thumb-hover-color: #555;
+
+.custom-scrollbar {
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+  margin-top: 5px;
+
+  &::-webkit-scrollbar {
+    width: $scrollbar-width;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: $scrollbar-track-color;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $scrollbar-thumb-color;
+    border-radius: 5px;
+
+    &:hover {
+      background: $scrollbar-thumb-hover-color;
+    }
+  }
+}
