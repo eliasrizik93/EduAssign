@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import MessageOutlinedIcon from "@material-ui/icons/MessageOutlined";
 import NotificationsNoneIcon from "@material-ui/icons/NotificationsNone";
@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { Button } from "@material-ui/core";
 import PersonOutlineIcon from "@material-ui/icons/PersonOutline";
 import { blue } from "@material-ui/core/colors";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const useStyles = makeStyles({
   icon: {
@@ -51,10 +51,17 @@ const IconWrapper: React.FC<IconWrapperProps> = ({
 }) => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const onClick = useCallback(() => {
+  const location = useLocation();
+
+  useEffect(() => {
+    const path = location.pathname.substring(1) as IconType;
+    setClickedIcon(path || "home");
+  }, [location, setClickedIcon]);
+
+  const onClick = () => {
     setClickedIcon(name);
     navigate(`/${name}`);
-  }, [name, setClickedIcon, navigate]);
+  };
 
   return (
     <button
@@ -74,18 +81,18 @@ const IconWrapper: React.FC<IconWrapperProps> = ({
 
 const NavBar: React.FC = () => {
   const classes = useStyles();
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [clickedIcon, setClickedIcon] = useState<IconType | null>(null);
-  const ICONS = {
+  const ICONS: Record<IconType, typeof HomeOutlinedIcon> = {
     home: HomeOutlinedIcon,
     messages: MessageOutlinedIcon,
     notifications: NotificationsNoneIcon,
   };
 
   return (
-    <nav className="w-full h-10 mdh-14 lg:h-16 text-zinc-50 bg-white flex  ">
+    <nav className="w-full h-10 mdh-14 lg:h-16 text-zinc-50 bg-white flex">
       <button
-        className="h-full ml-10 text-sky-700 font-bold text-2xl w-1/3  flex items-center"
+        className="h-full ml-10 text-sky-700 font-bold text-2xl w-1/3 flex items-center"
         onClick={() => navigate("/")}
       >
         EduAssign
