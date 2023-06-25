@@ -1,97 +1,103 @@
-import { Box } from "@material-ui/core";
+import { Avatar, Box } from "@material-ui/core";
 import "./SidebarMessagesList.scss";
+import { capitalize, getInitials, getRandomColor } from "../../../../common/Funcitons";
+import DOMPurify from 'dompurify';
+
 const Users = [
   {
-    name: "elias rizik3",
+    name: "elias rizik",
     time: "10:00",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: "https://img.freepik.com/premium-photo/close-up-young-handsome-man-with-beard-smiling-camera-with-confidence-standing-white-background_1258-49635.jpg",
   },
   {
-    name: "jack sparrow3",
+    name: "jack sparrow",
     time: "10:00",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: '',
   },
   {
-    name: "david alba3",
+    name: "david alba",
     time: "10:30",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: '',
   },
   {
-    name: "Lionel Messi3",
+    name: "Lionel Messi",
     time: "10:00",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: '',
   },
   {
-    name: "elias rizik4",
+    name: "elias rizik",
     time: "10:00",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: '',
   },
   {
-    name: "jack sparrow4",
+    name: "jack sparrow",
     time: "10:00",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: '',
   },
   {
-    name: "david alba4",
+    name: "david alba",
     time: "10:30",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: '',
   },
   {
-    name: "Lionel Messi4",
+    name: "Lionel Messi",
     time: "10:00",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: '',
   },
   {
-    name: "elias rizik5",
+    name: "elias rizik",
     time: "10:00",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: "https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fphotos%2Fpeople-face&psig=AOvVaw09fMN_7VhTs7GVaDrwBiFh&ust=1687807157911000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCOCcxuKR3_8CFQAAAAAdAAAAABAE",
   },
   {
-    name: "jack sparrow5",
+    name: "jack sparrows",
     time: "10:00",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: '',
   },
   {
-    name: "david alba5",
+    name: "david alba",
     time: "10:30",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: '',
   },
   {
-    name: "Lionel Messi5",
+    name: "Lionel Messi",
     time: "10:00",
     notifications: 3,
     lastMessage: "hello how are you?",
-    iconImage: "wwq",
+    iconImage: '',
   },
 ];
 
 const SidebarMessagesList = () => {
+
   return (
     <div className="custom-scrollbar">
       {Users.length > 0 &&
         Users.map((user) => {
+          const sanitizedImage = DOMPurify.sanitize(user.iconImage ?? '');
+          const avatarColor = sanitizedImage ? '' : getRandomColor();
           return (
             <Box
               key={user.name}
@@ -103,10 +109,14 @@ const SidebarMessagesList = () => {
                 width: "100%",
               }}
             >
-              <div>{user.iconImage}</div>
+              <Avatar src={user.iconImage} alt="No Picture" style={{
+                width: 60,
+                height: 60,
+                backgroundColor: getRandomColor()
+              }} >{getInitials(user.name)}</Avatar>
               <Box component="div" className="ml-4 w-full">
                 <div className="flex">
-                  <div>{user.name}</div>
+                  <div>{capitalize(user.name)}</div>
                   <Box component="div" className="ml-auto mr-2">
                     {user.time}
                   </Box>

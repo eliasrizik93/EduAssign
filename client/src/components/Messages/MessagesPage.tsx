@@ -1,6 +1,6 @@
 import React from "react";
 import MessageContent from "./MessageContent/MessageContent";
-import SideBarMessages from "./SideBarMessages/SideBarMessages";
+import SideBarMessages from "./SidebarMessages/SideBarMessages";
 
 const Messages: React.FC = () => {
   return (
