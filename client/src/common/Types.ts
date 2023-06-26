@@ -2,7 +2,7 @@ export type User = {
   id: number;
   name: string;
   time: Date;
-  notifications: number;
+  unreadMessages: number;
   lastMessage: string;
   iconImage: string;
 };

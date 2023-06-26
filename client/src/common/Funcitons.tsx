@@ -14,6 +14,7 @@ const colors = [
   "#87cefa",
   "#ffbf00",
 ];
+const userColorMap: Record<number, string> = {};
 
 export const capitalize = (name: string): string => {
   return name
@@ -30,7 +31,11 @@ export const getInitials = (name: string): string => {
   return initials;
 };
 
-export const getRandomColor = (): string => {
-  const randomIndex = Math.floor(Math.random() * colors.length);
-  return colors[randomIndex];
+export const getUserColor = (userId: number): string => {
+  if (userId in userColorMap) {
+    return userColorMap[userId];
+  }
+  const randomColorIndex = Math.floor(Math.random() * colors.length);
+  userColorMap[userId] = colors[randomColorIndex]
+  return userColorMap[userId]
 };

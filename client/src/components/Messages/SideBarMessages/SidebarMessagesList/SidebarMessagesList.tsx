@@ -1,9 +1,9 @@
-import { Avatar, Box } from "@material-ui/core";
+import { Avatar, Badge, Box } from "@material-ui/core";
 import "./SidebarMessagesList.scss";
 import {
   capitalize,
   getInitials,
-  getRandomColor,
+  getUserColor,
 } from "../../../../common/Funcitons";
 import DOMPurify from "dompurify";
 import { User } from "../../../../common/Types";
@@ -34,17 +34,36 @@ const SidebarMessagesList = (props: propsType) => {
                 width: "100%",
               }}
             >
-              <Avatar
-                src={sanitizedImage}
-                alt="No Picture"
-                style={{
-                  width: 60,
-                  height: 60,
-                  backgroundColor: getRandomColor(),
-                }}
-              >
-                {getInitials(user.name)}
-              </Avatar>
+              <Box style={{
+                position: "relative",
+                display: "flex",
+                flexDirection: "row-reverse"
+              }}>
+                <Avatar
+                  src={sanitizedImage}
+                  alt="No Picture"
+                  style={{
+                    width: 60,
+                    height: 60,
+                    backgroundColor: getUserColor(user.id),
+                  }}
+                >
+                  {getInitials(user.name)}
+
+                </Avatar>
+                {user.unreadMessages > 0 && (
+                  <Badge
+                    badgeContent={user.unreadMessages}
+                    color="error"
+                    style={{
+                      position: "absolute",
+                      top: 10,
+                      right: 5
+                    }}
+                  />
+                )}
+              </Box>
+
               <Box component="div" className="ml-4 w-full">
                 <div className="flex">
                   <div>{capitalize(user.name)}</div>
