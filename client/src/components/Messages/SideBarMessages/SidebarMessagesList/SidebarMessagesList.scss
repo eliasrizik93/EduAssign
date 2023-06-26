@@ -4,7 +4,7 @@ $scrollbar-thumb-color: #888;
 $scrollbar-thumb-hover-color: #555;
 
 .custom-scrollbar {
-  height: calc(100vh - 120px);
+  height: calc(100vh - 16vh);
   overflow-y: auto;
   margin-top: 5px;
 
