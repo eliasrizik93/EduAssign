@@ -26,7 +26,7 @@ const initialUsersList: User[] = [
     name: "david alba",
     time: new Date(),
     unreadMessages: 0,
-    lastMessage: "hello how are you?",
+    lastMessage: "hello?",
     iconImage: "",
   },
   {
@@ -34,7 +34,7 @@ const initialUsersList: User[] = [
     name: "Lionel Messi",
     time: new Date(),
     unreadMessages: 3,
-    lastMessage: "hello how are you?",
+    lastMessage: "hello how are ",
     iconImage: "",
   },
   {
@@ -42,7 +42,7 @@ const initialUsersList: User[] = [
     name: "elias rizik",
     time: new Date(),
     unreadMessages: 5,
-    lastMessage: "hello how are you?",
+    lastMessage: " how are you?",
     iconImage: "",
   },
   {
@@ -66,7 +66,7 @@ const initialUsersList: User[] = [
     name: "Lionel Messi",
     time: new Date(),
     unreadMessages: 3,
-    lastMessage: "hello how are you?",
+    lastMessage: "hello ",
     iconImage: "",
   },
   {
@@ -103,7 +103,7 @@ const initialUsersList: User[] = [
     iconImage: "",
   },
 ];
-const SideBarMessages = () => {
+const SidebarMessages = () => {
   const [usersList, setUsersList] = useState<User[]>(initialUsersList);
 
   const handleSearch = (userName: string): void => {
@@ -112,15 +112,21 @@ const SideBarMessages = () => {
     );
     setUsersList(filteredUsersList);
   };
-
+  const removeMessageChat = (id: number) => {
+    const filteredUsersList = usersList.filter((user: User) => user.id !== id);
+    setUsersList(filteredUsersList);
+  };
   return (
     <div className="w-1/5 pr-2 pl-5 pt-3">
       <SidebarSearch handleSearch={handleSearch} />
       <div className="h-full w-full">
-        <SidebarMessagesList usersList={usersList} />
+        <SidebarMessagesList
+          usersList={usersList}
+          removeMessageChat={removeMessageChat}
+        />
       </div>
     </div>
   );
 };
 
-export default SideBarMessages;
+export default SidebarMessages;

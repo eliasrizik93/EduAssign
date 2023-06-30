@@ -25,3 +25,7 @@ $scrollbar-thumb-hover-color: #555;
     }
   }
 }
+.outlined-icon path {
+  fill: none;
+  stroke: currentColor;
+}
