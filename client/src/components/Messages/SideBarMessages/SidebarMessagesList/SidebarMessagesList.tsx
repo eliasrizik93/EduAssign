@@ -6,7 +6,6 @@ import {
   Menu,
   MenuItem,
 } from "@material-ui/core";
-import "./SidebarMessagesList.scss";
 import {
   capitalize,
   getInitials,
@@ -21,61 +20,85 @@ import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import DeleteIcon from "@material-ui/icons/Delete";
 import NotificationsOffIcon from "@material-ui/icons/NotificationsOff";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-type propsType = {
+import "./SidebarMessagesList.scss";
+
+// Define types for better readability
+type AnchorElementMap = { [key: number]: HTMLElement | null };
+type MutedUsers = { [key: number]: boolean };
+type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>;
+
+type SidebarMessagesListProps = {
   usersList: User[];
   removeMessageChat: (id: number) => void;
 };
-type AnchorElementMap = { [key: number]: HTMLElement | null };
-type mutedUsers = { [key: number]: boolean };
-type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>;
 
-const SidebarMessagesList = (props: propsType) => {
-  const options: Intl.DateTimeFormatOptions = {
+// Define style constants
+const avatarStyle: React.CSSProperties = {
+  width: 60,
+  height: 60,
+};
+const badgeStyle: React.CSSProperties = {
+  position: "absolute",
+  top: 10,
+  right: 5,
+};
+const menuStyle: React.CSSProperties = {
+  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  marginTop: "-8px",
+  width: "300px",
+};
+
+const SidebarMessagesList = (props: SidebarMessagesListProps) => {
+  const { removeMessageChat } = props;
+  const [menuAnchorMap, setMenuAnchorMap] = useState<AnchorElementMap>({});
+  const [mutedUsers, setMutedUsers] = useState<MutedUsers>({});
+
+  const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
     hour: "numeric",
     minute: "numeric",
   };
-  const { removeMessageChat } = props;
-  const [menuAnchorEl, setMenuAnchorEl] = useState<AnchorElementMap>({});
-  const [isMuted, setIsMuted] = useState<mutedUsers>({});
 
-  const handleMenuOpen = (
+  const openMenu = (
     userId: number,
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    setMenuAnchorEl((prevAnchorEl: AnchorElementMap) => ({
-      ...prevAnchorEl,
-      [userId]: event.currentTarget,
-    }));
+    updateState(setMenuAnchorMap, userId, event.currentTarget);
   };
 
-  const updateStateFunc = (
-    setStateFunc: StateSetter<any>,
+  const closeMenu = (userId: number) => {
+    updateState(setMenuAnchorMap, userId, null);
+  };
+
+  const toggleMute = (userId: number) => {
+    updateState(setMutedUsers, userId, !mutedUsers[userId]);
+    closeMenu(userId);
+  };
+
+  const removeUser = (userId: number) => {
+    removeMessageChat(userId);
+    closeMenu(userId);
+  };
+
+  const updateState = (
+    stateSetter: StateSetter<any>,
     key: string | number,
     value: any
   ) => {
-    setStateFunc((prevState: any) => ({
+    stateSetter((prevState: any) => ({
       ...prevState,
       [key]: value,
     }));
   };
 
-  const handleMenuClose = (userId: number) => {
-    updateStateFunc(setMenuAnchorEl, userId, null);
-  };
-  const handleMuteButton = (id: number) => {
-    updateStateFunc(setIsMuted, id, !isMuted[id]);
-    handleMenuClose(id);
-  };
-  const handleRemoveUser = (id: number) => {
-    removeMessageChat(id);
-    handleMenuClose(id);
-  };
   return (
     <div className="custom-scrollbar">
       {props.usersList.length > 0 &&
         props.usersList.map((user: User) => {
           const sanitizedImage = DOMPurify.sanitize(user.iconImage ?? "");
-          const timeString = user.time.toLocaleTimeString(undefined, options);
+          const timeString = user.time.toLocaleTimeString(
+            undefined,
+            dateTimeFormatOptions
+          );
 
           return (
             <Box
@@ -99,8 +122,7 @@ const SidebarMessagesList = (props: propsType) => {
                   src={sanitizedImage}
                   alt="No Picture"
                   style={{
-                    width: 60,
-                    height: 60,
+                    ...avatarStyle,
                     backgroundColor: getUserColor(user.id),
                   }}
                 >
@@ -111,11 +133,7 @@ const SidebarMessagesList = (props: propsType) => {
                     badgeContent={user.unreadMessages}
                     color="error"
                     overlap="rectangular"
-                    style={{
-                      position: "absolute",
-                      top: 10,
-                      right: 5,
-                    }}
+                    style={{ ...badgeStyle }}
                   />
                 )}
               </Box>
@@ -129,7 +147,7 @@ const SidebarMessagesList = (props: propsType) => {
                   >
                     <IconButton
                       className="mr-2 "
-                      onClick={(event) => handleMenuOpen(user.id, event)}
+                      onClick={(event) => openMenu(user.id, event)}
                       style={{
                         transform: "translateY(50%) rotate(90deg)",
                         padding: 0,
@@ -140,9 +158,9 @@ const SidebarMessagesList = (props: propsType) => {
                       <MoreVertIcon />
                     </IconButton>
                     <Menu
-                      anchorEl={menuAnchorEl[user.id]}
-                      open={Boolean(menuAnchorEl[user.id])}
-                      onClose={() => handleMenuClose(user.id)}
+                      anchorEl={menuAnchorMap[user.id]}
+                      open={Boolean(menuAnchorMap[user.id])}
+                      onClose={() => closeMenu(user.id)}
                       getContentAnchorEl={null}
                       keepMounted
                       anchorOrigin={{
@@ -154,44 +172,40 @@ const SidebarMessagesList = (props: propsType) => {
                         horizontal: "left",
                       }}
                       PaperProps={{
-                        style: {
-                          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
-                          marginTop: "-8px",
-                          width: "300px",
-                        },
+                        style: menuStyle,
                       }}
                     >
-                      <MenuItem onClick={() => handleMenuClose(user.id)}>
+                      <MenuItem onClick={() => closeMenu(user.id)}>
                         <CheckIcon
                           className="outlined-icon mr-5"
                           fontSize="large"
                         />
                         Mark as Read
                       </MenuItem>
-                      <MenuItem onClick={() => handleMenuClose(user.id)}>
+                      <MenuItem onClick={() => closeMenu(user.id)}>
                         <AccountCircleIcon
                           className="outlined-icon mr-5"
                           fontSize="large"
                         />
                         Go to Profile
                       </MenuItem>
-                      <MenuItem onClick={() => handleMuteButton(user.id)}>
-                        {!isMuted[user.id] ? (
-                          <NotificationsIcon
-                            className="outlined-icon mr-5"
-                            fontSize="large"
-                          />
-                        ) : (
+                      <MenuItem onClick={() => toggleMute(user.id)}>
+                        {mutedUsers[user.id] ? (
                           <NotificationsOffIcon
                             className="outlined-icon mr-5"
                             fontSize="large"
                           />
+                        ) : (
+                          <NotificationsIcon
+                            className="outlined-icon mr-5"
+                            fontSize="large"
+                          />
                         )}
-                        {!isMuted[user.id]
-                          ? "Mute Notifications"
-                          : "Unmute Notifications"}
+                        {mutedUsers[user.id]
+                          ? "Unmute Notifications"
+                          : "Mute Notifications"}
                       </MenuItem>
-                      <MenuItem onClick={() => handleRemoveUser(user.id)}>
+                      <MenuItem onClick={() => removeUser(user.id)}>
                         <DeleteIcon
                           className="outlined-icon mr-5"
                           fontSize="large"
