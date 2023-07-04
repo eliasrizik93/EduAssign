@@ -113,7 +113,7 @@ const NavBar: React.FC = () => {
           data-testid="Sign-in"
           variant="outlined"
           className={classes.roundedButton}
-          onClick={() => navigate("/signin")}
+          onClick={() => navigate("/Auth")}
         >
           <PersonOutlineIcon className={classes.signInIcon} />
           <span className={`ml-2 ${classes.signInText}`}>Sign in</span>

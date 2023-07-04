@@ -36,6 +36,8 @@ export const getUserColor = (userId: number): string => {
     return userColorMap[userId];
   }
   const randomColorIndex = Math.floor(Math.random() * colors.length);
-  userColorMap[userId] = colors[randomColorIndex]
-  return userColorMap[userId]
+  userColorMap[userId] = colors[randomColorIndex];
+  return userColorMap[userId];
 };
+
+export const specialCharacters = /^[a-zA-Z0-9]*$/;

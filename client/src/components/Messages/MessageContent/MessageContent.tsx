@@ -1,4 +1,4 @@
-import { makeStyles, TextField, Button, Paper } from "@material-ui/core";
+import { makeStyles, TextField, Paper } from "@material-ui/core";
 import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 
 import SendIcon from "@material-ui/icons/Send";
