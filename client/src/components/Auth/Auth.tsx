@@ -1,6 +1,6 @@
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import { useState } from "react";
+import React, { useState } from "react";
 import { specialCharacters } from "../../common/Funcitons";
 
 import { Visibility, VisibilityOff } from "@material-ui/icons";
@@ -46,27 +46,31 @@ days.unshift("Select Day");
 years.unshift("Select Year");
 months.unshift("Select Month");
 const Auth = () => {
-  const [username, setUsername] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [handleOpen, setHandleOpen] = useState<boolean>(false);
   const [gender, setGender] = useState<Gender>("male");
-  const [selectedDay, setSelectedDay] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
-
+  const [selectedDay, setSelectedDay] = useState<string>(days[0]);
+  const [selectedMonth, setSelectedMonth] = useState<string>(months[0]);
+  const [selectedYear, setSelectedYear] = useState<string>(years[0]);
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>();
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [signUpError, setSignUpError] = useState<string>("");
   const handleChange = (event: any) => {
     setGender(event.target.value);
   };
-  const handleUsernameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     if (specialCharacters.test(value) || value === "") {
       setError(false);
     } else {
       setError(true);
     }
-    setUsername(value);
+    setEmail(value);
   };
   const handleTogglePasswordVisibility = () => setShowPassword(!showPassword);
   const handlePasswordBlur = () => {
@@ -83,18 +87,51 @@ const Auth = () => {
   const handleYearChange = (event: any) => {
     setSelectedYear(event.target.value);
   };
-
+  const handleSignIn = () => {};
+  const handleSignUp = () => {
+    if (firstName === "") {
+      setSignUpError("First name field is Empty!");
+    }
+    if (lastName === "") {
+      setSignUpError("Last name field is Empty!");
+    }
+    if (email === "") {
+      setSignUpError("Email is field Empty!");
+    }
+    if (password === "") {
+      setSignUpError("Password is field Empty!");
+    }
+    if (confirmPassword === "") {
+      setSignUpError("Confirm Password field is Empty!");
+    }
+    if (phoneNumber === "") {
+      setSignUpError("Phone number field is Empty!");
+    }
+  };
+  const handlePhoneNumber = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    if (!isNaN(Number(value))) {
+      setPhoneNumber(value);
+    }
+  };
   return (
     <div className="flex justify-center items-center h-screen">
       <form className="bg-white h-1/2 w-1/4 shadow-xl rounded  flex flex-col space-y-5 p-12 flex justify-center items-center ">
+        <label
+          htmlFor="sign-in-section"
+          className="sign-in-label text-4xl mb-3"
+        >
+          Sign In
+        </label>
         <TextField
-          label="Username"
+          label="Email"
           variant="outlined"
-          value={username}
-          onChange={handleUsernameChange}
+          value={email}
+          onChange={handleEmailChange}
           className="mb-4 w-full"
+          type="email"
         />
-        {error && <span className="text-red-500">Invalid username</span>}
+        {error && <span className="text-red-500">Invalid email</span>}
         <TextField
           label="Password"
           type={showPassword ? "text" : "password"}
@@ -119,6 +156,7 @@ const Auth = () => {
           variant="contained"
           color="primary"
           className="w-full"
+          onClick={handleSignIn}
         >
           Submit
         </Button>
@@ -162,44 +200,63 @@ const Auth = () => {
             style={{ width: "100%" }}
           />
           <DialogContent>
+            {signUpError !== "" && <div>signUpError</div>}
             <div className="grid grid-cols-2 gap-4 mb-4">
               <TextField
                 label="First name"
                 type="text"
-                value={username}
+                value={firstName}
                 variant="outlined"
+                onChange={(e) => setFirstName(e.target.value)}
               />
               <TextField
                 label="Last name"
                 type={"text"}
-                value={password}
+                value={lastName}
                 variant="outlined"
+                onChange={(e) => setLastName(e.target.value)}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 mb-4">
               <TextField
                 label="Email"
                 type="email"
-                value={password}
+                value={email}
                 variant="outlined"
+                onChange={(e) => setEmail(e.target.value)}
               />
               <TextField
                 label="Phone number"
-                type="email"
-                value={password}
+                type="text"
+                value={phoneNumber}
                 variant="outlined"
+                onChange={handlePhoneNumber}
               />
               <TextField
                 label="Password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 value={password}
                 variant="outlined"
+                onChange={(e) => setPassword(e.target.value)}
+                onBlur={handlePasswordBlur}
+                InputProps={{
+                  endAdornment: (
+                    <div
+                      onClick={handleTogglePasswordVisibility}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </div>
+                  ),
+                }}
               />
               <TextField
                 label="Confirm Password"
-                type="password"
-                value={password}
+                type={showPassword ? "text" : "password"}
+                value={confirmPassword}
                 variant="outlined"
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onBlur={handlePasswordBlur}
               />
             </div>
             <div className="grid grid-cols-3 gap-4 mb-4">
@@ -339,6 +396,7 @@ const Auth = () => {
                   color: "white",
                   marginTop: "1rem",
                 }}
+                onClick={handleSignUp}
               >
                 Sign Up
               </Button>
