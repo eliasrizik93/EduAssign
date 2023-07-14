@@ -24,7 +24,6 @@ import {
   IconButton,
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
-type Gender = "male" | "female";
 
 const days: any = Array.from({ length: 31 }, (_, index) => index + 1);
 const months: any = [
@@ -42,24 +41,43 @@ const months: any = [
   "Dec",
 ];
 const years: any = Array.from({ length: 120 }, (_, index) => 2023 - index);
+enum PasswordType {
+  Password = "password",
+  PasswordConfirm = "passwordConfirm",
+}
+enum Gender {
+  Male = "male",
+  Female = "female",
+}
 days.unshift("Select Day");
 years.unshift("Select Year");
 months.unshift("Select Month");
 const Auth = () => {
   const [email, setEmail] = useState<string>("");
+  const [emailSignUp, setEmailSignUp] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<boolean>(false);
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [handleOpen, setHandleOpen] = useState<boolean>(false);
-  const [gender, setGender] = useState<Gender>("male");
+  const [gender, setGender] = useState<Gender>(Gender.Male);
   const [selectedDay, setSelectedDay] = useState<string>(days[0]);
   const [selectedMonth, setSelectedMonth] = useState<string>(months[0]);
   const [selectedYear, setSelectedYear] = useState<string>(years[0]);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>();
+  const [passwordSignUp, setPasswordSignUp] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
-  const [signUpError, setSignUpError] = useState<string>("");
+  const [signUpError, setSignUpError] = useState<string | null>("");
+  const [firstNameError, setFirstNameError] = useState<string | null>(null);
+  const [lastNameError, setLastNameError] = useState<string | null>(null);
+  const [passwordSignUpError, setPasswordSignUpError] = useState<string | null>(
+    null
+  );
+  const [passwordConfirmError, setPasswordConfirmError] = useState<
+    string | null
+  >(null);
+
   const handleChange = (event: any) => {
     setGender(event.target.value);
   };
@@ -87,6 +105,28 @@ const Auth = () => {
   const handleYearChange = (event: any) => {
     setSelectedYear(event.target.value);
   };
+  const handleFirstName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const onlyLetters = /^[a-zA-Z\s]*$/;
+    if (onlyLetters.test(value)) {
+      setFirstName(value);
+      setFirstNameError(null);
+    } else {
+      setFirstNameError("Invalid input");
+      setFirstName(value);
+    }
+  };
+  const handleLastName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    const onlyLetters = /^[a-zA-Z\s]*$/;
+    if (onlyLetters.test(value)) {
+      setLastName(value);
+    } else {
+      setLastNameError("Invalid input");
+      setLastName(value);
+    }
+  };
+
   const handleSignIn = () => {};
   const handleSignUp = () => {
     if (firstName === "") {
@@ -112,6 +152,47 @@ const Auth = () => {
     const { value } = event.target;
     if (!isNaN(Number(value))) {
       setPhoneNumber(value);
+    } else {
+      setFirstNameError("Invalid input"); // Set the error message
+    }
+  };
+  const handleModalClose = () => {
+    setHandleOpen(false);
+    setSelectedDay(days[0]);
+    setSelectedMonth(months[0]);
+    setSelectedYear(years[0]);
+    setFirstName("");
+    setLastName("");
+    setPhoneNumber("");
+    setPasswordSignUp("");
+    setConfirmPassword("");
+    setSignUpError(null);
+    setFirstNameError(null);
+    setLastNameError(null);
+    setPasswordSignUpError(null);
+    setPasswordConfirmError(null);
+    setEmailSignUp("");
+    setGender(Gender.Male);
+  };
+
+  const handlePassword = (event: any, type: PasswordType) => {
+    const { value } = event.target;
+    if (type === PasswordType.Password) {
+      if (value.length <= 10 && value.length !== 0) {
+        setPasswordSignUpError("Password should be more than 10 characters");
+      } else {
+        setPasswordSignUpError(null);
+      }
+      setPasswordSignUp(value);
+    } else {
+      if (value.length <= 10) {
+        setPasswordConfirmError("Password should be more than 10 characters");
+      } else if (value !== passwordSignUp) {
+        setPasswordConfirmError("Password should be the same");
+      } else {
+        setPasswordConfirmError(null);
+      }
+      setConfirmPassword(value);
     }
   };
   return (
@@ -142,12 +223,16 @@ const Auth = () => {
           onBlur={handlePasswordBlur}
           InputProps={{
             endAdornment: (
-              <div
-                onClick={handleTogglePasswordVisibility}
-                style={{ cursor: "pointer" }}
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </div>
+              <>
+                {password.length > 0 && (
+                  <div
+                    onClick={handleTogglePasswordVisibility}
+                    style={{ cursor: "pointer" }}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </div>
+                )}
+              </>
             ),
           }}
         />
@@ -177,7 +262,7 @@ const Auth = () => {
         </Button>
         <Dialog
           open={handleOpen}
-          onClose={() => setHandleOpen(false)}
+          onClose={handleModalClose}
           TransitionComponent={Fade}
           BackdropComponent={Backdrop}
           BackdropProps={{ timeout: 500 }}
@@ -186,9 +271,7 @@ const Auth = () => {
             Sign Up
             <IconButton
               aria-label="close"
-              onClick={() => {
-                setHandleOpen(false);
-              }}
+              onClick={handleModalClose}
               style={{ position: "absolute", top: 8, right: 8 }}
             >
               <CloseIcon />
@@ -200,30 +283,33 @@ const Auth = () => {
             style={{ width: "100%" }}
           />
           <DialogContent>
-            {signUpError !== "" && <div>signUpError</div>}
             <div className="grid grid-cols-2 gap-4 mb-4">
               <TextField
                 label="First name"
                 type="text"
                 value={firstName}
                 variant="outlined"
-                onChange={(e) => setFirstName(e.target.value)}
+                onChange={handleFirstName}
+                error={Boolean(firstNameError)}
+                helperText={firstNameError}
               />
               <TextField
                 label="Last name"
                 type={"text"}
                 value={lastName}
                 variant="outlined"
-                onChange={(e) => setLastName(e.target.value)}
+                onChange={handleLastName}
+                error={Boolean(lastNameError)}
+                helperText={lastNameError}
               />
             </div>
             <div className="grid grid-cols-1 gap-4 mb-4">
               <TextField
                 label="Email"
                 type="email"
-                value={email}
+                value={emailSignUp}
                 variant="outlined"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => setEmailSignUp(e.target.value)}
               />
               <TextField
                 label="Phone number"
@@ -235,10 +321,12 @@ const Auth = () => {
               <TextField
                 label="Password"
                 type={showPassword ? "text" : "password"}
-                value={password}
+                value={passwordSignUp}
                 variant="outlined"
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => handlePassword(e, PasswordType.Password)}
                 onBlur={handlePasswordBlur}
+                error={Boolean(passwordSignUpError)}
+                helperText={passwordSignUpError}
                 InputProps={{
                   endAdornment: (
                     <div
@@ -255,8 +343,13 @@ const Auth = () => {
                 type={showPassword ? "text" : "password"}
                 value={confirmPassword}
                 variant="outlined"
-                onChange={(e) => setConfirmPassword(e.target.value)}
+                error={Boolean(passwordConfirmError)}
+                helperText={passwordConfirmError}
+                onChange={(e) =>
+                  handlePassword(e, PasswordType.PasswordConfirm)
+                }
                 onBlur={handlePasswordBlur}
+                
               />
             </div>
             <div className="grid grid-cols-3 gap-4 mb-4">
