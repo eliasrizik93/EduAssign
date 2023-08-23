@@ -32,12 +32,9 @@ const SignIn = () => {
   return (
     <div className="flex justify-center items-center h-screen">
       <form className="bg-white h-1/2 w-1/4 shadow-xl rounded  flex flex-col space-y-5 p-12 flex justify-center items-center ">
-        <label
-          htmlFor="sign-in-section"
-          className="sign-in-label text-4xl mb-3"
-        >
+        <Typography variant="h4" className="signin-label">
           Sign In
-        </label>
+        </Typography>
         <TextField
           label="Email"
           variant="outlined"
