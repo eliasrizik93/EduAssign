@@ -1,19 +1,5 @@
-const colors = [
-  "#ff0000",
-  "#0000ff",
-  "#00ff00",
-  "#800080",
-  "#ffa500",
-  "#008080",
-  "#ff69b4",
-  "#4b0082",
-  "#00ffff",
-  "#00ff00",
-  "#ffbf00",
-  "#9370db",
-  "#87cefa",
-  "#ffbf00",
-];
+import { colors } from "./Constants";
+
 const userColorMap: Record<number, string> = {};
 
 export const capitalize = (name: string): string => {
@@ -40,4 +26,12 @@ export const getUserColor = (userId: number): string => {
   return userColorMap[userId];
 };
 
-export const specialCharacters = /^[a-zA-Z0-9]*$/;
+export const days: (string | number)[] = Array.from(
+  { length: 31 },
+  (_, index) => index + 1
+);
+
+export const years: (string | number)[] = Array.from(
+  { length: 120 },
+  (_, index) => 2023 - index
+);

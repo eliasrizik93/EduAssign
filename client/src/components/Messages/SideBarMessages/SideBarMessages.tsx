@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SidebarSearch from "./SidebarSearch/SidebarSearch";
 import SidebarMessagesList from "./SidebarMessagesList/SidebarMessagesList";
-import { User } from "../../../common/Types";
+import { User } from "../../../common/TypesAndEnums";
 
 const initialUsersList: User[] = [
   {

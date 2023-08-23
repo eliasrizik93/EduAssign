@@ -6,3 +6,8 @@ export type User = {
   lastMessage: string;
   iconImage: string;
 };
+
+export enum Gender {
+  Male = "male",
+  Female = "female",
+}

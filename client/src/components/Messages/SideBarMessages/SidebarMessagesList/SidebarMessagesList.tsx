@@ -12,7 +12,7 @@ import {
   getUserColor,
 } from "../../../../common/Funcitons";
 import DOMPurify from "dompurify";
-import { User } from "../../../../common/Types";
+import { User } from "../../../../common/TypesAndEnums";
 import { useState } from "react";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import CheckIcon from "@material-ui/icons/Check";

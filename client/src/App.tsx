@@ -2,7 +2,7 @@ import React from "react";
 import NavBar from "./components/NavBar/NavBar";
 import { Route, Routes } from "react-router-dom";
 import MessagesPage from "./components/Messages/MessagesPage";
-import Auth from "./components/Auth/Auth";
+import SignIn from "./components/SignIn/SignIn";
 
 const App: React.FC = () => {
   const homePaths = ["", "/", "/home"];
@@ -14,7 +14,7 @@ const App: React.FC = () => {
           <Route key={index} path={path} element={<> </>} />
         ))}
         <Route path="/messages" element={<MessagesPage />} />
-        <Route path="/auth" element={<Auth />} />
+        <Route path="/SignIn" element={<SignIn />} />
       </Routes>
     </>
   );
