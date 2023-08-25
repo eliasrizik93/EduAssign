@@ -4,25 +4,40 @@ import { Visibility, VisibilityOff } from "@material-ui/icons";
 
 import { Link } from "react-router-dom";
 import SignUp from "../SignUp/SignUp";
+import "./SignIn.scss";
+
+type Credentials = { email: string; password: string };
 
 const SignIn = () => {
-  const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
-  const [isSignUpOpen, setIsSignUpOpen] = useState(false);
+  const [credentials, setCredentials] = useState<Credentials>({
+    email: "",
+    password: "",
+  });
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState<boolean>(false);
 
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
-  const handleSignUp = (isOpen: boolean) => {
-    setIsSignUpOpen(isOpen);
-  };
-  const handlePasswordBlur = () => {
-    setShowPassword(false);
-  };
+  const handleSignUp = (isOpen: boolean) => setIsSignUpOpen(isOpen);
+
+  const resetPasswordVisibility = () => setShowPassword(false);
 
   const handleInputChange = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = event.target;
     setCredentials((prev) => ({ ...prev, [name]: value }));
+  };
+  const renderPasswordToggleIcon = () => {
+    if (credentials.password.length > 0) return null;
+    return (
+      <div
+        onClick={togglePasswordVisibility}
+        className="password-toggle-icon"
+        style={{ cursor: "pointer" }}
+      >
+        {showPassword ? <VisibilityOff /> : <Visibility />}
+      </div>
+    );
   };
 
   const handleSignIn = () => {
@@ -51,20 +66,9 @@ const SignIn = () => {
           variant="outlined"
           onChange={handleInputChange}
           className="mb-4 w-full"
-          onBlur={handlePasswordBlur}
+          onBlur={resetPasswordVisibility}
           InputProps={{
-            endAdornment: (
-              <>
-                {credentials.password.length > 0 && (
-                  <div
-                    onClick={togglePasswordVisibility}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </div>
-                )}
-              </>
-            ),
+            endAdornment: renderPasswordToggleIcon(),
           }}
           name="password"
         />

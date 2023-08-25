@@ -26,7 +26,6 @@ import { days, years } from "../../common/Funcitons";
 import { months } from "../../common/Constants";
 import { Gender } from "../../common/TypesAndEnums";
 
-
 type propsType = {
   isSignUpModalOpen: boolean;
   handleSignUpModal: (isOpen: boolean) => void;
@@ -38,7 +37,7 @@ months.unshift("Select Month");
 
 const SignUp = (props: propsType) => {
   const { isSignUpModalOpen, handleSignUpModal } = props;
-  const [emailSignUp, setEmailSignUp] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [gender, setGender] = useState<Gender>(Gender.Male);
@@ -54,9 +53,7 @@ const SignUp = (props: propsType) => {
   const [firstNameError, setFirstNameError] = useState<string | null>(null);
   const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
   const [lastNameError, setLastNameError] = useState<string | null>(null);
-  const [passwordSignUpError, setPasswordSignUpError] = useState<string | null>(
-    null
-  );
+  const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordConfirmError, setPasswordConfirmError] = useState<
     string | null
   >(null);
@@ -118,9 +115,9 @@ const SignUp = (props: propsType) => {
 
     if (name === "password") {
       if (value.length <= 10 && value.length !== 0) {
-        setPasswordSignUpError("Password should be more than 10 characters");
+        setPasswordError("Password should be more than 10 characters");
       } else {
-        setPasswordSignUpError(null);
+        setPasswordError(null);
       }
       setPasswordSignUp(value);
     }
@@ -137,8 +134,8 @@ const SignUp = (props: propsType) => {
     }
 
     // Update the corresponding state
-    if (name === "emailSignUp") {
-      setEmailSignUp(value);
+    if (name === "email") {
+      setEmail(value);
     } else if (name === "password") {
       setPassword(value);
     } else if (name === "phoneNumber") {
@@ -154,7 +151,7 @@ const SignUp = (props: propsType) => {
     if (
       !firstName ||
       !lastName ||
-      !emailSignUp ||
+      !email ||
       !password ||
       !confirmPassword ||
       !phoneNumber ||
@@ -181,10 +178,43 @@ const SignUp = (props: propsType) => {
     setSignUpError(null);
     setFirstNameError(null);
     setLastNameError(null);
-    setPasswordSignUpError(null);
+    setPasswordError(null);
     setPasswordConfirmError(null);
-    setEmailSignUp("");
+    setEmail("");
     setGender(Gender.Male);
+  };
+
+  const getMenuItems = (items: (string | number)[]) =>
+    items.map((item) => (
+      <MenuItem key={item} value={item}>
+        {item}
+      </MenuItem>
+    ));
+
+  const checkSignUpError = () => {
+    if (!signUpError) return null;
+    return (
+      <div style={{ color: "red" }} className="flex justify-center">
+        {signUpError}
+      </div>
+    );
+  };
+
+  const renderPasswordIcon = () => {
+    return (
+      <div
+        onClick={handleTogglePasswordVisibility}
+        style={{ cursor: "pointer" }}
+      >
+        {passwordSignUp?.length > 0 ? (
+          showPassword ? (
+            <VisibilityOff />
+          ) : (
+            <Visibility />
+          )
+        ) : null}
+      </div>
+    );
   };
 
   return (
@@ -211,11 +241,7 @@ const SignUp = (props: propsType) => {
         style={{ width: "100%" }}
       />
       <DialogContent>
-        {signUpError && (
-          <div style={{ color: "red" }} className="flex justify-center">
-            {signUpError}
-          </div>
-        )}
+        {checkSignUpError()}
         <div className="grid grid-cols-2 gap-4 mb-4">
           <TextField
             label="First name"
@@ -242,10 +268,10 @@ const SignUp = (props: propsType) => {
           <TextField
             label="Email"
             type="email"
-            value={emailSignUp}
+            value={email}
             variant="outlined"
             onChange={handleInputChange}
-            name="emailSignUp"
+            name="email"
           />
           <TextField
             label="Phone number"
@@ -264,17 +290,10 @@ const SignUp = (props: propsType) => {
             variant="outlined"
             onChange={(e) => handleInputChange(e)}
             onBlur={handlePasswordBlur}
-            error={Boolean(passwordSignUpError)}
-            helperText={passwordSignUpError}
+            error={Boolean(passwordError)}
+            helperText={passwordError}
             InputProps={{
-              endAdornment: (
-                <div
-                  onClick={handleTogglePasswordVisibility}
-                  style={{ cursor: "pointer" }}
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </div>
-              ),
+              endAdornment: renderPasswordIcon(),
             }}
             name="password"
           />
@@ -314,11 +333,7 @@ const SignUp = (props: propsType) => {
                 },
               }}
             >
-              {months.map((month) => (
-                <MenuItem key={month} value={month}>
-                  {month}
-                </MenuItem>
-              ))}
+              {getMenuItems(months)}
             </Select>
           </FormControl>
           <FormControl variant="outlined">
@@ -344,11 +359,7 @@ const SignUp = (props: propsType) => {
                 },
               }}
             >
-              {days.map((day) => (
-                <MenuItem key={day} value={day}>
-                  {day}
-                </MenuItem>
-              ))}
+              {getMenuItems(days)}
             </Select>
           </FormControl>
           <FormControl variant="outlined">
@@ -374,11 +385,7 @@ const SignUp = (props: propsType) => {
                 },
               }}
             >
-              {years.map((year) => (
-                <MenuItem key={year} value={year}>
-                  {year}
-                </MenuItem>
-              ))}
+              {getMenuItems(years)}
             </Select>
           </FormControl>
         </div>
