@@ -3,6 +3,7 @@ import ThumbUpIcon from "@material-ui/icons/ThumbUp";
 
 import SendIcon from "@material-ui/icons/Send";
 import { useState } from "react";
+import Message from "./Message/Message";
 const useStyles = makeStyles((theme) => ({
   messageContainer: {
     margin: "30px 50px 0 30px",
@@ -45,7 +46,7 @@ const MessageContent = () => {
   const sendMessage = () => {};
   return (
     <div className={`${classes.messageContainer} w-4/5`}>
-      <Paper className={classes.messageList}>Content</Paper>
+      <Paper className={classes.messageList}><Message /></Paper>
       <div className={classes.messageInput}>
         <TextField
           className={classes.textField}
