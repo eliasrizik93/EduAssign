@@ -56,6 +56,8 @@ const Message = (props: MessageProps) => {
         src={props.imgUrl}
         alt="No Picture"
         className={classes.avatar}
+
+        
       ></Avatar>
       <div className={classes.text}>qweqw qkw eoqw wqopi ejio ejqopi ejqiop ejqqopi ejqiop ejqwej owqqopi ejqiop ejqwej owqqopi ejqiop ejqwej owqwej owqw qjiwe </div>
       <div className={classes.timestamp}>12:30</div>
