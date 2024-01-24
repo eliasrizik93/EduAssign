@@ -62,6 +62,8 @@ const Message = (props: MessageProps) => {
     </div>
     <div className={classes.container}>
       <Avatar
+
+      
         src={props.imgUrl}
         alt="No Picture"
         className={classes.avatar}
