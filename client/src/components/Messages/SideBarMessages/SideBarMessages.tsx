@@ -105,14 +105,15 @@ const initialUsersList: User[] = [
 ];
 const SidebarMessages = () => {
   const [usersList, setUsersList] = useState<User[]>(initialUsersList);
-
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const handleSearch = (userName: string): void => {
     const filteredUsersList = initialUsersList.filter((user: User) =>
-      user.name.toLowerCase().startsWith(userName.toLowerCase())
+      user.name.toLowerCase().includes(userName.toLowerCase())
     );
     setUsersList(filteredUsersList);
+    setSearchQuery(userName);
   };
-  const removeMessageChat = (id: number) => {
+  const removeChat = (id: number) => {
     const filteredUsersList = usersList.filter((user: User) => user.id !== id);
     setUsersList(filteredUsersList);
   };
@@ -121,8 +122,9 @@ const SidebarMessages = () => {
       <SidebarSearch handleSearch={handleSearch} />
       <div className="h-full w-full">
         <SidebarMessagesList
-          usersList={usersList}
-          removeMessageChat={removeMessageChat}
+          users={usersList}
+          searchQuery={searchQuery}
+          removeChat={removeChat}
         />
       </div>
     </div>

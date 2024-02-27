@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Avatar,
   Badge,
@@ -5,31 +6,43 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  SvgIconProps,
 } from "@material-ui/core";
-import {
-  capitalize,
-  getInitials,
-  getUserColor,
-} from "../../../../common/Funcitons";
-import DOMPurify from "dompurify";
-import { User } from "../../../../common/TypesAndEnums";
-import { useState } from "react";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 import CheckIcon from "@material-ui/icons/Check";
 import AccountCircleIcon from "@material-ui/icons/AccountCircle";
 import DeleteIcon from "@material-ui/icons/Delete";
 import NotificationsOffIcon from "@material-ui/icons/NotificationsOff";
 import NotificationsIcon from "@material-ui/icons/Notifications";
-import "./SidebarMessagesList.scss";
+import {
+  capitalize,
+  getInitials,
+  getUserColor,
+} from "../../../../common/Funcitons";
+import DOMPurify from "dompurify";
 
+import { User } from "../../../../common/TypesAndEnums";
+import "./SidebarMessagesList.scss";
+interface CustomMenuItemProps {
+  label: string;
+  IconComponent: React.ComponentType<SvgIconProps>;
+  onClick: () => void;
+}
+interface CustomMenuItemListProps {
+  userId: number;
+}
+interface AvatarBadgeProps {
+  user: User;
+  sanitizedImage: string;
+}
 // Define types for better readability
 type AnchorElementMap = { [key: number]: HTMLElement | null };
-type MutedUsers = { [key: number]: boolean };
+type MutedUserIds = { [key: number]: boolean };
 type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>;
-
 type SidebarMessagesListProps = {
-  usersList: User[];
-  removeMessageChat: (id: number) => void;
+  users: User[];
+  searchQuery: string;
+  removeChat: (id: number) => void;
 };
 
 // Define style constants
@@ -49,34 +62,35 @@ const menuStyle: React.CSSProperties = {
 };
 
 const SidebarMessagesList = (props: SidebarMessagesListProps) => {
-  const { removeMessageChat } = props;
-  const [menuAnchorMap, setMenuAnchorMap] = useState<AnchorElementMap>({});
-  const [mutedUsers, setMutedUsers] = useState<MutedUsers>({});
+  const { users, searchQuery, removeChat } = props;
+  const [menuAnchorElements, setMenuAnchorElements] =
+    useState<AnchorElementMap>({});
+  const [mutedUserIds, setMutedUserIds] = useState<MutedUserIds>({});
 
   const dateTimeFormatOptions: Intl.DateTimeFormatOptions = {
     hour: "numeric",
     minute: "numeric",
   };
 
-  const openMenu = (
+  const handleMenuOpen = (
     userId: number,
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
-    updateState(setMenuAnchorMap, userId, event.currentTarget);
+    updateState(setMenuAnchorElements, userId, event.currentTarget);
   };
 
-  const closeMenu = (userId: number) => {
-    updateState(setMenuAnchorMap, userId, null);
+  const handleMenuClose = (userId: number) => {
+    updateState(setMenuAnchorElements, userId, null);
   };
 
-  const toggleMute = (userId: number) => {
-    updateState(setMutedUsers, userId, !mutedUsers[userId]);
-    closeMenu(userId);
+  const handleMuteToggle = (userId: number) => {
+    updateState(setMutedUserIds, userId, !mutedUserIds[userId]);
+    handleMenuClose(userId);
   };
 
-  const removeUser = (userId: number) => {
-    removeMessageChat(userId);
-    closeMenu(userId);
+  const handleUserRemoval = (userId: number) => {
+    removeChat(userId);
+    handleMenuClose(userId);
   };
 
   const updateState = (
@@ -90,10 +104,132 @@ const SidebarMessagesList = (props: SidebarMessagesListProps) => {
     }));
   };
 
+  const getHighlightedUserName = (name: string): React.ReactNode => {
+    const searchIndex = name.toLowerCase().indexOf(searchQuery.toLowerCase());
+    const capitalName = capitalize(name);
+
+    if (searchIndex !== -1) {
+      const beforeMatch = capitalName.substring(0, searchIndex);
+      const match = capitalName.substring(
+        searchIndex,
+        searchIndex + searchQuery.length
+      );
+      const afterMatch = capitalName.substring(
+        searchIndex + searchQuery.length,
+        capitalName.length
+      );
+      return (
+        <>
+          {beforeMatch}
+          <span className="highlight">{match}</span>
+          {afterMatch}
+        </>
+      );
+    }
+    return capitalName;
+  };
+
+  const AvatarBadge: React.FC<AvatarBadgeProps> = ({
+    user,
+    sanitizedImage,
+  }) => (
+    <Box
+      style={{
+        position: "relative",
+        display: "flex",
+        flexDirection: "row-reverse",
+      }}
+    >
+      <Avatar
+        src={sanitizedImage}
+        alt="No Picture"
+        style={{
+          ...avatarStyle,
+          backgroundColor: getUserColor(user.id),
+        }}
+      >
+        {getInitials(user.name)}
+      </Avatar>
+      {user.unreadMessages > 0 && (
+        <Badge
+          badgeContent={user.unreadMessages}
+          color="error"
+          overlap="rectangular"
+          style={{ ...badgeStyle }}
+        />
+      )}
+    </Box>
+  );
+  const generateMenuItems = (
+    userid: number,
+    mutedUserIds: MutedUserIds,
+    handleMenuClose: (userId: number) => void,
+    handleMuteToggle: (userId: number) => void,
+    handleUserRemoval: (userId: number) => void
+  ) => [
+    {
+      label: "Mark as Read",
+      Icon: CheckIcon,
+      action: () => handleMenuClose(userid),
+    },
+    {
+      label: "Go to Profile",
+      Icon: AccountCircleIcon,
+      action: () => handleMenuClose(userid),
+    },
+    {
+      label: mutedUserIds[userid]
+        ? "Unmute Notifications"
+        : "Mute Notifications",
+      Icon: mutedUserIds[userid] ? NotificationsOffIcon : NotificationsIcon,
+      action: () => handleMuteToggle(userid),
+    },
+    {
+      label: "Delete",
+      Icon: DeleteIcon,
+      action: () => handleUserRemoval(userid),
+    },
+  ];
+
+  const CustomMenuItem: React.FC<CustomMenuItemProps> = ({
+    label,
+    IconComponent,
+    onClick,
+  }) => {
+    return (
+      <MenuItem onClick={onClick}>
+        <IconComponent className="outlined-icon mr-5" fontSize="large" />
+        {label}
+      </MenuItem>
+    );
+  };
+  const CustomMenuItemList: React.FC<CustomMenuItemListProps> = ({
+    userId,
+  }) => {
+    const menuItems = generateMenuItems(
+      userId,
+      mutedUserIds,
+      handleMenuClose,
+      handleMuteToggle,
+      handleUserRemoval
+    );
+    return (
+      <>
+        {menuItems.map((item, index) => (
+          <CustomMenuItem
+            key={index}
+            label={item.label}
+            IconComponent={item.Icon}
+            onClick={() => item.action()}
+          />
+        ))}
+      </>
+    );
+  };
   return (
     <div className="custom-scrollbar">
-      {props.usersList.length > 0 &&
-        props.usersList.map((user: User) => {
+      {users.length > 0 &&
+        users.map((user: User) => {
           const sanitizedImage = DOMPurify.sanitize(user.iconImage ?? "");
           const timeString = user.time.toLocaleTimeString(
             undefined,
@@ -104,50 +240,26 @@ const SidebarMessagesList = (props: SidebarMessagesListProps) => {
             <Box
               key={user.id}
               component="div"
-              className="mt-8"
+              className="mt-8 Container-Message-List-Item"
               sx={{
                 display: "flex",
                 alignItems: "center",
                 width: "100%",
               }}
             >
-              <Box
-                style={{
-                  position: "relative",
-                  display: "flex",
-                  flexDirection: "row-reverse",
-                }}
-              >
-                <Avatar
-                  src={sanitizedImage}
-                  alt="No Picture"
-                  style={{
-                    ...avatarStyle,
-                    backgroundColor: getUserColor(user.id),
-                  }}
-                >
-                  {getInitials(user.name)}
-                </Avatar>
-                {user.unreadMessages > 0 && (
-                  <Badge
-                    badgeContent={user.unreadMessages}
-                    color="error"
-                    overlap="rectangular"
-                    style={{ ...badgeStyle }}
-                  />
-                )}
-              </Box>
-
+              <AvatarBadge user={user} sanitizedImage={sanitizedImage} />
               <Box component="div" className="ml-4 w-full relative">
                 <div className="flex">
-                  <div className="text-lg">{capitalize(user.name)}</div>
+                  <div className="text-lg">
+                    {getHighlightedUserName(user.name)}
+                  </div>
                   <Box
                     component="div"
                     className="ml-auto mr-2 absolute right-0 mt-1"
                   >
                     <IconButton
                       className="mr-2 "
-                      onClick={(event) => openMenu(user.id, event)}
+                      onClick={(event) => handleMenuOpen(user.id, event)}
                       style={{
                         transform: "translateY(50%) rotate(90deg)",
                         padding: 0,
@@ -158,9 +270,9 @@ const SidebarMessagesList = (props: SidebarMessagesListProps) => {
                       <MoreVertIcon />
                     </IconButton>
                     <Menu
-                      anchorEl={menuAnchorMap[user.id]}
-                      open={Boolean(menuAnchorMap[user.id])}
-                      onClose={() => closeMenu(user.id)}
+                      anchorEl={menuAnchorElements[user.id]}
+                      open={Boolean(menuAnchorElements[user.id])}
+                      onClose={() => handleMenuClose(user.id)}
                       getContentAnchorEl={null}
                       keepMounted
                       anchorOrigin={{
@@ -175,43 +287,7 @@ const SidebarMessagesList = (props: SidebarMessagesListProps) => {
                         style: menuStyle,
                       }}
                     >
-                      <MenuItem onClick={() => closeMenu(user.id)}>
-                        <CheckIcon
-                          className="outlined-icon mr-5"
-                          fontSize="large"
-                        />
-                        Mark as Read
-                      </MenuItem>
-                      <MenuItem onClick={() => closeMenu(user.id)}>
-                        <AccountCircleIcon
-                          className="outlined-icon mr-5"
-                          fontSize="large"
-                        />
-                        Go to Profile
-                      </MenuItem>
-                      <MenuItem onClick={() => toggleMute(user.id)}>
-                        {mutedUsers[user.id] ? (
-                          <NotificationsOffIcon
-                            className="outlined-icon mr-5"
-                            fontSize="large"
-                          />
-                        ) : (
-                          <NotificationsIcon
-                            className="outlined-icon mr-5"
-                            fontSize="large"
-                          />
-                        )}
-                        {mutedUsers[user.id]
-                          ? "Unmute Notifications"
-                          : "Mute Notifications"}
-                      </MenuItem>
-                      <MenuItem onClick={() => removeUser(user.id)}>
-                        <DeleteIcon
-                          className="outlined-icon mr-5"
-                          fontSize="large"
-                        />
-                        Delete
-                      </MenuItem>
+                      <CustomMenuItemList userId={user.id} />
                     </Menu>
                   </Box>
                 </div>

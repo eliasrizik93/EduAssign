@@ -29,3 +29,16 @@ $scrollbar-thumb-hover-color: #555;
   fill: none;
   stroke: currentColor;
 }
+
+.Container-Message-List-Item:first-child {
+  margin-top: 10px;
+}
+
+.highlight {
+  background-color: yellow;
+}
+.avatar-badge {
+  position: "relative";
+  display: "flex";
+  flex-direction: "row-reverse";
+}
