@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import SidebarSearch from "./SidebarSearch/SidebarSearch";
 import SidebarMessagesList from "./SidebarMessagesList/SidebarMessagesList";
 import { User } from "../../../common/TypesAndEnums";
