@@ -109,50 +109,62 @@ const initialDecks: DeckProps[] = [
 
 function DeckList() {
   const [decks, setDecks] = useState<DeckProps[]>(initialDecks);
-  const toggleDeckOpen = (path: number[]) => {
-    const toggleDeck = (list: DeckProps[], path: number[]): DeckProps[] => {
-      if (path.length === 0) return list;
-      const [currendId, ...restPath] = path;
-      return list.map((deck) =>
-        deck.id === currendId
-          ? {
-              ...deck,
-              isOpen: restPath.length === 0 ? !deck.isOpen : deck.isOpen,
-              list: toggleDeck(deck.list, restPath),
-            }
-          : deck
-      );
-    };
-    setDecks(toggleDeck(decks, path));
+  const toggleDeckOpen = (path: number[]) => setDecks(toggleDeck(decks, path));
+
+  const toggleDeck = (list: DeckProps[], path: number[]): DeckProps[] => {
+    if (path.length === 0) return list;
+    const [currentId, ...restPath] = path;
+
+    return list.map((deck) => {
+      if (deck.id === currentId) {
+        const shouldToggleClose = restPath.length === 0 && deck.isOpen;
+        return {
+          ...deck,
+          isOpen: restPath.length === 0 ? !deck.isOpen : deck.isOpen,
+          list: shouldToggleClose
+            ? closeNestedLists(deck.list)
+            : toggleDeck(deck.list, restPath),
+        };
+      }
+      return deck;
+    });
   };
+
+  const closeNestedLists = (list: DeckProps[]): DeckProps[] =>
+    list.map((deck) => ({
+      ...deck,
+      isOpen: false,
+      list: closeNestedLists(deck.list),
+    }));
 
   const DeckRow = ({ deck, path }: { deck: DeckProps; path: number[] }) => {
     const deckIndicator =
       deck?.list?.length > 0 ? (deck.isOpen ? "-" : "+") : " ";
+    const indentation = (path.length - 1) * 15;
     return (
       <>
-        <Row className="interactive-row" key={deck.name}>
-          <Col className="text-left">
+        <Row className="interactive-row text-center" key={deck.name}>
+          <Col>
             <div
               className="deck-name-container"
+              style={{ paddingLeft: `${indentation}px` }}
               onClick={() => toggleDeckOpen(path)}
             >
               <div className="toggle-indicator">{deckIndicator}</div>
               <div className="deck-title">{deck.name}</div>
             </div>
           </Col>
-          <Col className="text-left">{deck.new}</Col>
-          <Col className="text-left">{deck.learn}</Col>
-          <Col className="text-left">{deck.due}</Col>
+          <Col>{deck.new}</Col>
+          <Col>{deck.learn}</Col>
+          <Col>{deck.due}</Col>
         </Row>
         {deck.isOpen &&
           deck.list.map((nestedDeck) => (
-            <div
-              className="nested-deck"
-              key={`${nestedDeck.name}-${nestedDeck.id}`}
-            >
-              <DeckRow deck={nestedDeck} path={[...path, nestedDeck.id]} />
-            </div>
+            <DeckRow
+              key={`${nestedDeck.id}`}
+              deck={nestedDeck}
+              path={[...path, nestedDeck.id]}
+            />
           ))}
       </>
     );
@@ -160,11 +172,11 @@ function DeckList() {
 
   return (
     <Container className="mt-10 deck-container">
-      <Row className="bg-light interactive-row">
-        <Col className="text-left">Deck</Col>
-        <Col className="text-left ">New</Col>
-        <Col className="text-left">Learn</Col>
-        <Col className="text-left">Due</Col>
+      <Row className="bg-light interactive-row text-center">
+        <Col>Deck</Col>
+        <Col>New</Col>
+        <Col>Learn</Col>
+        <Col>Due</Col>
       </Row>
       {decks.map((deck) => (
         <DeckRow key={deck.name} deck={deck} path={[deck.id]} />
