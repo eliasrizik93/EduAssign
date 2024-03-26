@@ -1,0 +1,27 @@
+.deck-container {
+  border: 1px solid #808080;
+  box-shadow: 2px 2px 5px rgba(128, 128, 128, 0.5);
+  text-align: center;
+}
+.interactive-row {
+  cursor: pointer;
+  text-align: center;
+  &:hover {
+    background-color: #ccc9c9;
+  }
+}
+.nested-deck {
+  margin-left: 25px;
+}
+
+.deck-name-container {
+  display: flex;
+  align-items: center;
+  .toggle-indicator {
+    width: 15px;
+    text-align: center;
+  }
+  .deck-title {
+    margin-left: 5px;
+  }
+}
