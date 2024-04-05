@@ -1,8 +1,9 @@
-import React from "react";
-import DeckList from "../DeckList/DeckList";
+import React from 'react';
+import DeckList from '../DeckList/DeckList';
+import WhoGoingToBeMillionaire from '../WhoGoingToBeMillionaire/WhoGoingToBeMillionaire';
 
 const Home: React.FC = () => {
-  return <DeckList />;
+  return <WhoGoingToBeMillionaire />;
 };
 
 export default Home;
