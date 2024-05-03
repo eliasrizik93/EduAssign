@@ -135,10 +135,10 @@ function WhoGoingToBeMillionaire() {
       )}
       {quizState === 'won' && <div className='winner'>YOU WON!!!</div>}
 
-      <div>What Does This Word Mean: {items[currentIndex].word}?</div>
+      <div>What Does This Word Mean: {items[currentIndex]?.word}?</div>
       <div className='grid-container'>
         <div className='answers-container'>
-          {items[currentIndex].options.map((option) => (
+          {items[currentIndex]?.options.map((option) => (
             <div
               className={`elements ${option.classes}`}
               key={option.id}
