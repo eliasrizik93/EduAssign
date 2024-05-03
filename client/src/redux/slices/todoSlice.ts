@@ -1,7 +1,6 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface TodoState {
-  // Define your todo state properties here
   todos: string[];
 }
 
@@ -10,7 +9,7 @@ const initialState: TodoState = {
 };
 
 const todoSlice = createSlice({
-  name: "todo",
+  name: 'todo',
   initialState,
   reducers: {
     addTodo: (state, action: PayloadAction<string>) => {

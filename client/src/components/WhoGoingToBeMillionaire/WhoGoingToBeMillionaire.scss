@@ -1,14 +1,50 @@
-.grid-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  width: 500px;
-}
-
-.elements {
-  border: 1px solid black;
-  &:hover {
-    background-color: red;
-    cursor: pointer;
+.quiz-container {
+  display: flex;
+  flex-direction: column;
+  .answers-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 500px;
+    .elements {
+      border: 1px solid black;
+      text-align: center;
+      background-color: gray;
+      color: white;
+      &:hover {
+        background-color: orange;
+        cursor: pointer;
+      }
+    }
+    .correct {
+      background-color: green;
+      &:hover {
+        background-color: green;
+      }
+    }
+    .false {
+      background-color: red;
+      &:hover {
+        background-color: red;
+      }
+    }
   }
+  .footer {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    button {
+      width: 30%;
+      margin-bottom: 10px;
+    }
+  }
+}
+.game-over {
+  color: red;
+}
+.winner {
+  color: green;
 }
