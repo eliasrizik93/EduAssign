@@ -109,12 +109,15 @@ function WhoGoingToBeMillionaire() {
         index === currentIndex ? { ...item, options: updatedOptions } : item
       )
     );
+    if (isCorrect) goToNextQuestion();
   };
   const goToNextQuestion = () => {
-    if (currentIndex < items.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      setIsAnswered(false);
-    }
+    setTimeout(() => {
+      if (currentIndex < items.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+        setIsAnswered(false);
+      }
+    }, 1000);
   };
   const resetQuizData = (quizItems: QuizItem[] = initialItems) =>
     quizItems.map((item) => ({
@@ -129,13 +132,15 @@ function WhoGoingToBeMillionaire() {
   };
 
   return (
-    <div className='container d-flex flex-column align-items-center mt-10'>
+    <div className='quiz-container '>
       {quizState === 'lost' && (
         <div className='game-over'>THE GAME ENDED. YOU LOST</div>
       )}
       {quizState === 'won' && <div className='winner'>YOU WON!!!</div>}
 
-      <div>What Does This Word Mean: {items[currentIndex]?.word}?</div>
+      <div className='mb-4'>
+        What Does This Word Mean: {items[currentIndex]?.word}?
+      </div>
       <div className='grid-container'>
         <div className='answers-container'>
           {items[currentIndex]?.options.map((option) => (
@@ -149,13 +154,6 @@ function WhoGoingToBeMillionaire() {
           ))}
         </div>
         <div className='footer'>
-          <Button
-            disabled={quizState !== 'active' || !isAnswered}
-            variant='primary'
-            onClick={goToNextQuestion}
-          >
-            Next
-          </Button>
           {(quizState === 'lost' || quizState === 'won') && (
             <Button variant='danger' onClick={restartQuiz}>
               Restart
