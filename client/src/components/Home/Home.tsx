@@ -1,9 +1,9 @@
 import React from 'react';
-import DeckList from '../DeckList/DeckList';
-import WhoGoingToBeMillionaire from '../WhoGoingToBeMillionaire/WhoGoingToBeMillionaire';
+
+import CreateCard from '../CreateCard/CreateCard';
 
 const Home: React.FC = () => {
-  return <WhoGoingToBeMillionaire />;
+  return <CreateCard />;
 };
 
 export default Home;

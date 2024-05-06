@@ -10,3 +10,6 @@ html,
 #root {
   @apply h-full overflow-x-hidden overflow-y-hidden;
 }
+* {
+  box-sizing: content-box;
+}
