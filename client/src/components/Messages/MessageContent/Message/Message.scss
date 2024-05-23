@@ -1,0 +1,24 @@
+.container {
+  display: flex;
+  width: 100%;
+}
+
+.avatar {
+  height: 40px;
+  width: 40px;
+}
+
+.text {
+  margin-left: 10px;
+  margin-top: 15px;
+  background-color: #56667529;
+  border-radius: 0 30px 30px 30px;
+  padding: 10px 20px 10px 20px;
+  color: black;
+}
+
+.timestamp {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}

@@ -1,0 +1,28 @@
+.icon {
+  height: 30px;
+  width: 30px;
+}
+
+.iconClicked {
+  height: 30px;
+  width: 30px;
+  color: blue;
+}
+
+.divClicked {
+  border-bottom: 2px solid blue;
+}
+
+.roundedButton {
+  border-radius: 25px;
+  border-color: blue[800];
+}
+
+.signInText {
+  text-transform: capitalize;
+  color: blue[800];
+}
+
+.signInIcon {
+  color: blue[800];
+}

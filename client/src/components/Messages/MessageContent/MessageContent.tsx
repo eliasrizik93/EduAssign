@@ -1,41 +1,19 @@
-import { makeStyles, TextField, Paper } from "@material-ui/core";
-import ThumbUpIcon from "@material-ui/icons/ThumbUp";
+import { TextField, Paper } from '@mui/material';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import SendIcon from '@mui/icons-material/Send';
+import { useState } from 'react';
+import Message from './Message/Message';
+import './MessageContent.scss';
 
-import SendIcon from "@material-ui/icons/Send";
-import { useState } from "react";
-import Message from "./Message/Message";
-const useStyles = makeStyles((theme) => ({
-  messageContainer: {
-    margin: "30px 50px 0 30px",
-  },
-  messageList: {
-    flex: 1,
-    overflow: "auto",
-    marginBottom: theme.spacing(2),
-    padding: theme.spacing(2),
-    backgroundColor: "#f5f5f5",
-    height: "80vh",
-  },
-  textField: {
-    flexGrow: 1,
-    marginRight: theme.spacing(2),
-  },
-  messageInput: {
-    display: "flex",
-    alignItems: "center",
-  },
-}));
-
-const MessageContent = () => {
-  const classes = useStyles();
-  const [newMessage, setNewMessage] = useState<string>("");
+const MessageContent: React.FC = () => {
+  const [newMessage, setNewMessage] = useState<string>('');
   const [emptyMessage, setEmptyMessage] = useState<boolean>(true);
 
   const handleTextFieldChange = (
     event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
   ) => {
     const { value } = event.target;
-    if (value === "") {
+    if (value === '') {
       !emptyMessage && setEmptyMessage(true);
     } else {
       emptyMessage && setEmptyMessage(false);
@@ -44,16 +22,19 @@ const MessageContent = () => {
   };
 
   const sendMessage = () => {};
+
   return (
-    <div className={`${classes.messageContainer} w-4/5`}>
-      <Paper className={classes.messageList}><Message /></Paper>
-      <div className={classes.messageInput}>
+    <div className='messageContainer w-4/5'>
+      <Paper className='messageList'>
+        <Message />
+      </Paper>
+      <div className='messageInput'>
         <TextField
-          className={classes.textField}
+          className='textField'
           value={newMessage}
           onChange={handleTextFieldChange}
-          placeholder="Type a message..."
-          variant="outlined"
+          placeholder='Type a message...'
+          variant='outlined'
         />
         {!emptyMessage && <SendIcon onClick={sendMessage} />}
         {emptyMessage && <ThumbUpIcon />}
@@ -61,4 +42,5 @@ const MessageContent = () => {
     </div>
   );
 };
+
 export default MessageContent;

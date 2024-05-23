@@ -1,41 +1,18 @@
-import React, { ChangeEvent, useState } from "react";
-import TextField from "@material-ui/core/TextField";
-import SearchIcon from "@material-ui/icons/Search";
-import { makeStyles } from "@material-ui/core/styles";
-import { red } from "@material-ui/core/colors";
-
-const useStyles = makeStyles((theme) => ({
-  input: {
-    width: "100%",
-  },
-  searchIcon: {
-    color: theme.palette.action.active,
-  },
-  focused: {
-    color: theme.palette.primary.main,
-  },
-  labelContainer: {
-    "&$labelFocused": {
-      fontWeight: "bold",
-    },
-  },
-  labelFocused: {},
-  errorMessage: {
-    color: red[500],
-  },
-}));
+import React, { ChangeEvent, useState } from 'react';
+import TextField from '@mui/material/TextField';
+import SearchIcon from '@mui/icons-material/Search';
+import './SidebarSearch.scss';
 
 const REGEX_CHECK = /\d|[^\w\s]/; // No numbers or special characters
 
-type propsTypes = {
+type Props = {
   handleSearch: (userName: string) => void;
 };
 
-const SidebarSearch = (props: propsTypes) => {
+const SidebarSearch: React.FC<Props> = ({ handleSearch }) => {
   const [inputIsFocused, setInputIsFocused] = useState<boolean>(false);
-  const [searchValue, setSearchValue] = useState<string>("");
-  const [errorMessage, setErrorMessage] = useState<string>("");
-  const classes = useStyles();
+  const [searchValue, setSearchValue] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleInputFocus = () => {
     setInputIsFocused(true);
@@ -49,20 +26,20 @@ const SidebarSearch = (props: propsTypes) => {
     const { value } = event.target;
     setSearchValue(value);
     if (REGEX_CHECK.test(value)) {
-      setErrorMessage("Invalid input");
+      setErrorMessage('Invalid input');
       return;
     }
-    setErrorMessage("");
-    props.handleSearch(value);
+    setErrorMessage('');
+    handleSearch(value);
   };
 
   return (
     <>
       <TextField
-        id="standard-basic"
-        label="Search"
-        variant="standard"
-        className={classes.input}
+        id='standard-basic'
+        label='Search'
+        variant='standard'
+        className='input'
         value={searchValue}
         onChange={checkSearchValue}
         onFocus={handleInputFocus}
@@ -70,23 +47,20 @@ const SidebarSearch = (props: propsTypes) => {
         InputProps={{
           endAdornment: (
             <SearchIcon
-              className={`${classes.searchIcon} ${
-                inputIsFocused && classes.focused
-              }`}
+              className={`searchIcon ${inputIsFocused ? 'focused' : ''}`}
             />
           ),
         }}
         InputLabelProps={{
           classes: {
-            root: classes.labelContainer,
-            focused: classes.labelFocused,
+            root: 'labelContainer',
+            focused: 'labelFocused',
           },
         }}
       />
-      {errorMessage && (
-        <div className={classes.errorMessage}>{errorMessage}</div>
-      )}
+      {errorMessage && <div className='errorMessage'>{errorMessage}</div>}
     </>
   );
 };
+
 export default SidebarSearch;

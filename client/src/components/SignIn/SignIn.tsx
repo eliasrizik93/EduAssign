@@ -1,17 +1,17 @@
-import React, { useState } from "react";
-import { TextField, Button, Typography, Divider } from "@material-ui/core";
-import { Visibility, VisibilityOff } from "@material-ui/icons";
+import React, { useState } from 'react';
+import { TextField, Button, Typography, Divider } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-import { Link } from "react-router-dom";
-import SignUp from "../SignUp/SignUp";
-import "./SignIn.scss";
+import { Link } from 'react-router-dom';
+import SignUp from '../SignUp/SignUp';
+import './SignIn.scss';
 
 type Credentials = { email: string; password: string };
 
 const SignIn = () => {
   const [credentials, setCredentials] = useState<Credentials>({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [isSignUpOpen, setIsSignUpOpen] = useState<boolean>(false);
@@ -32,8 +32,8 @@ const SignIn = () => {
     return (
       <div
         onClick={togglePasswordVisibility}
-        className="password-toggle-icon"
-        style={{ cursor: "pointer" }}
+        className='password-toggle-icon'
+        style={{ cursor: 'pointer' }}
       >
         {showPassword ? <VisibilityOff /> : <Visibility />}
       </div>
@@ -45,53 +45,53 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <form className="bg-white h-1/2 w-1/4 shadow-xl rounded  flex flex-col space-y-5 p-12 flex justify-center items-center ">
-        <Typography variant="h4" className="signin-label">
+    <div className='flex justify-center items-center h-screen'>
+      <form className='bg-white h-1/2 w-1/4 shadow-xl rounded  flex flex-col space-y-5 p-12 flex justify-center items-center '>
+        <Typography variant='h4' className='signin-label'>
           Sign In
         </Typography>
         <TextField
-          label="Email"
-          variant="outlined"
+          label='Email'
+          variant='outlined'
           value={credentials.email}
           onChange={handleInputChange}
-          className="mb-4 w-full"
-          type="email"
-          name="email"
+          className='mb-4 w-full'
+          type='email'
+          name='email'
         />
         <TextField
-          label="Password"
-          type={showPassword ? "text" : "password"}
+          label='Password'
+          type={showPassword ? 'text' : 'password'}
           value={credentials.password}
-          variant="outlined"
+          variant='outlined'
           onChange={handleInputChange}
-          className="mb-4 w-full"
+          className='mb-4 w-full'
           onBlur={resetPasswordVisibility}
           InputProps={{
             endAdornment: renderPasswordToggleIcon(),
           }}
-          name="password"
+          name='password'
         />
         <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          className="w-full"
+          type='submit'
+          variant='contained'
+          color='primary'
+          className='w-full'
           onClick={handleSignIn}
         >
           Submit
         </Button>
-        <Typography variant="body2" style={{ color: "#1877f1" }}>
-          <Link to="/forgot-password">Forgot Your Password?</Link>
+        <Typography variant='body2' style={{ color: '#1877f1' }}>
+          <Link to='/forgot-password'>Forgot Your Password?</Link>
         </Typography>
         <Divider
-          variant="fullWidth"
-          orientation="horizontal"
-          style={{ width: "100%" }}
+          variant='fullWidth'
+          orientation='horizontal'
+          style={{ width: '100%' }}
         />
         <Button
-          variant="contained"
-          style={{ backgroundColor: "green", color: "white" }}
+          variant='contained'
+          style={{ backgroundColor: 'green', color: 'white' }}
           onClick={() => handleSignUp(true)}
         >
           Sign Up

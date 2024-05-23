@@ -1,0 +1,24 @@
+$action-active: blue; // Example value
+$primary-main: orange;
+$red-500: red;
+.input {
+  width: 100%;
+}
+
+.searchIcon {
+  color: $action-active;
+}
+
+.focused {
+  color: $primary-main;
+}
+
+.labelContainer {
+  &.labelFocused {
+    font-weight: bold;
+  }
+}
+
+.errorMessage {
+  color: $red-500;
+}
