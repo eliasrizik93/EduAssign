@@ -1,32 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, Button, Typography, Divider } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
-import { Link } from 'react-router-dom';
-import SignUp from '../SignUp/SignUp';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import { login } from '../../redux/thunks/authThunks';
 import './SignIn.scss';
 
 type Credentials = { email: string; password: string };
 
-const SignIn = () => {
+const SignIn: React.FC = () => {
   const [credentials, setCredentials] = useState<Credentials>({
     email: '',
     password: '',
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [isSignUpOpen, setIsSignUpOpen] = useState<boolean>(false);
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { isAuthenticated, loading, error } = useSelector(
+    (state: RootState) => state.auth
+  );
 
-  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
-  const handleSignUp = (isOpen: boolean) => setIsSignUpOpen(isOpen);
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/profile');
+    }
+  }, [isAuthenticated, navigate]);
 
-  const resetPasswordVisibility = () => setShowPassword(false);
+  const handleSignIn = async (event: React.FormEvent) => {
+    event.preventDefault();
+    dispatch(
+      login({ email: credentials.email, password: credentials.password })
+    );
+  };
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setCredentials((prev) => ({ ...prev, [name]: value }));
   };
+
+  const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
+
   const renderPasswordToggleIcon = () => {
     if (credentials.password.length > 0) return null;
     return (
@@ -40,13 +54,12 @@ const SignIn = () => {
     );
   };
 
-  const handleSignIn = () => {
-    // Handle sign-in logic
-  };
-
   return (
     <div className='flex justify-center items-center h-screen'>
-      <form className='bg-white h-1/2 w-1/4 shadow-xl rounded  flex flex-col space-y-5 p-12 flex justify-center items-center '>
+      <form
+        className='bg-white h-1/2 w-1/4 shadow-xl rounded flex flex-col space-y-5 p-12 justify-center items-center'
+        onSubmit={handleSignIn}
+      >
         <Typography variant='h4' className='signin-label'>
           Sign In
         </Typography>
@@ -66,10 +79,7 @@ const SignIn = () => {
           variant='outlined'
           onChange={handleInputChange}
           className='mb-4 w-full'
-          onBlur={resetPasswordVisibility}
-          InputProps={{
-            endAdornment: renderPasswordToggleIcon(),
-          }}
+          InputProps={{ endAdornment: renderPasswordToggleIcon() }}
           name='password'
         />
         <Button
@@ -77,10 +87,11 @@ const SignIn = () => {
           variant='contained'
           color='primary'
           className='w-full'
-          onClick={handleSignIn}
+          disabled={loading}
         >
           Submit
         </Button>
+        {error && <Typography color='error'>{error}</Typography>}
         <Typography variant='body2' style={{ color: '#1877f1' }}>
           <Link to='/forgot-password'>Forgot Your Password?</Link>
         </Typography>
@@ -92,16 +103,9 @@ const SignIn = () => {
         <Button
           variant='contained'
           style={{ backgroundColor: 'green', color: 'white' }}
-          onClick={() => handleSignUp(true)}
         >
           Sign Up
         </Button>
-        {isSignUpOpen && (
-          <SignUp
-            isSignUpModalOpen={isSignUpOpen}
-            handleSignUpModal={handleSignUp}
-          />
-        )}
       </form>
     </div>
   );

@@ -1,21 +1,24 @@
-import React from "react";
-import NavBar from "./components/NavBar/NavBar";
-import { Route, Routes } from "react-router-dom";
-import MessagesPage from "./components/Messages/MessagesPage";
-import SignIn from "./components/SignIn/SignIn";
-import Home from "./components/Home/Home";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NavBar from './components/NavBar/NavBar';
+import MessagesPage from './components/Messages/MessagesPage';
+import SignIn from './components/SignIn/SignIn';
+import Home from './components/Home/Home';
+import PrivateRoute from './components/route/PrivateRoute';
 
 const App: React.FC = () => {
-  const homePaths = ["", "/", "/home"];
+  const homePaths = ['', '/', '/home'];
   return (
     <>
       <NavBar />
       <Routes>
-        {homePaths.map((path, index) => (
-          <Route key={index} path={path} element={<Home />} />
-        ))}
-        <Route path="/messages" element={<MessagesPage />} />
-        <Route path="/SignIn" element={<SignIn />} />
+        <Route path='/signin' element={<SignIn />} />
+        <Route element={<PrivateRoute />}>
+          <Route path='/messages' element={<MessagesPage />} />
+          {homePaths.map((path, index) => (
+            <Route key={index} path={path} element={<Home />} />
+          ))}
+        </Route>
       </Routes>
     </>
   );

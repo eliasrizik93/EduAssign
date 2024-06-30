@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
+import './AudioList.scss';
 interface Card {
   _id: string;
   text: string;
@@ -18,13 +19,14 @@ const AudioList: React.FC = () => {
 
   const fetchCards = async () => {
     try {
-      const response = await axios.get<Card[]>('http://localhost:3002/cards');
+      const response = await axios.get<Card[]>('http://localhost:3002/cards', {
+        withCredentials: true,
+      });
       setCards(response.data);
     } catch (error) {
       console.error('Error fetching cards:', error);
     }
   };
-
   const playAudio = async (id: string) => {
     try {
       const audio = new Audio(`http://localhost:3002/cards/${id}/audio`);
@@ -51,7 +53,10 @@ const AudioList: React.FC = () => {
                   onClick={() => playAudio(card._id)}
                   disabled={playingId === card._id}
                 >
-                  {playingId === card._id ? 'Playing...' : 'Play Audio'}
+                  <PlayCircleOutlineIcon
+                    className='play-icon'
+                    color={playingId === card._id ? 'primary' : 'action'}
+                  />
                 </button>
               </div>
               {!showAnswer && (

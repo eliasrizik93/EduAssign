@@ -26,6 +26,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { days, years } from '../../common/Funcitons';
 import { months } from '../../common/Constants';
 import { Gender } from '../../common/TypesAndEnums';
+import axios from 'axios';
 
 type propsType = {
   isSignUpModalOpen: boolean;
@@ -55,6 +56,7 @@ const SignUp = (props: propsType) => {
   const [phoneNumberError, setPhoneNumberError] = useState<string | null>(null);
   const [lastNameError, setLastNameError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordConfirmError, setPasswordConfirmError] = useState<
     string | null
   >(null);
@@ -114,8 +116,8 @@ const SignUp = (props: propsType) => {
     }
 
     if (name === 'password') {
-      if (value.length <= 10 && value.length !== 0) {
-        setPasswordError('Password should be more than 10 characters');
+      if (value.length < 6 && value.length !== 0) {
+        setPasswordError('Password should be more than 5 characters');
       } else {
         setPasswordError(null);
       }
@@ -123,8 +125,8 @@ const SignUp = (props: propsType) => {
     }
 
     if (name === 'confirmPassword') {
-      if (value.length <= 10 && value.length !== 0) {
-        setPasswordConfirmError('Password should be more than 10 characters');
+      if (value.length < 6 && value.length !== 0) {
+        setPasswordConfirmError('Password should be more than 5 characters');
       } else if (value !== passwordSignUp) {
         setPasswordConfirmError('Password should be the same');
       } else {
@@ -135,7 +137,15 @@ const SignUp = (props: propsType) => {
 
     // Update the corresponding state
     if (name === 'email') {
-      setEmail(value);
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (emailRegex.test(value) || value === '') {
+        setEmail(value);
+        setEmailError(null);
+      } else {
+        setEmailError('Invalid input');
+        setEmail(value);
+      }
     } else if (name === 'password') {
       setPassword(value);
     } else if (name === 'phoneNumber') {
@@ -147,7 +157,7 @@ const SignUp = (props: propsType) => {
     setGender(event.target.value as Gender);
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     if (
       !firstName ||
       !lastName ||
@@ -162,6 +172,43 @@ const SignUp = (props: propsType) => {
       setSignUpError('Some fields are Empty!');
     } else {
       setSignUpError(null);
+
+      const payload = {
+        email,
+        firstName,
+        lastName,
+        phoneNumber,
+        password: passwordSignUp,
+        birthday: `${selectedYear}-${selectedMonth}-${selectedDay}`,
+        gender,
+      };
+
+      try {
+        const response = await axios.post(
+          'http://localhost:3002/users/register',
+          payload,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        const data = response.data;
+
+        if (response.status === 201) {
+          // Handle successful sign-up
+          console.log('User signed up successfully:', data);
+          handleModalClose();
+        } else {
+          // Handle error
+          console.error('Sign-up error:', data);
+          setSignUpError(data.message || 'Sign-up failed');
+        }
+      } catch (error) {
+        console.error('Network error:', error);
+        setSignUpError('Network error');
+      }
     }
   };
 
@@ -270,6 +317,8 @@ const SignUp = (props: propsType) => {
             type='email'
             value={email}
             variant='outlined'
+            error={Boolean(emailError)}
+            helperText={emailError}
             onChange={handleInputChange}
             name='email'
           />
@@ -401,13 +450,13 @@ const SignUp = (props: propsType) => {
             >
               <div className='grid grid-cols-2 gap-4'>
                 <FormControlLabel
-                  value='male'
+                  value='Male'
                   control={<Radio color='primary' />}
                   label='Male'
                   className='col-span-1'
                 />
                 <FormControlLabel
-                  value='female'
+                  value='Female'
                   control={<Radio color='primary' />}
                   label='Female'
                   className='col-span-1'

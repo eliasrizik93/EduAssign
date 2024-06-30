@@ -6,7 +6,9 @@ import { Button } from '@mui/material';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './NavBar.scss'; // Import SCSS file
-
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
+import { logout } from '../../redux/slices/authSlice';
 type IconType = 'home' | 'messages' | 'notifications';
 
 interface IconWrapperProps {
@@ -24,7 +26,6 @@ const IconWrapper: React.FC<IconWrapperProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
   useEffect(() => {
     const path = location.pathname.substring(1) as IconType;
     setClickedIcon(path || 'home');
@@ -58,7 +59,19 @@ const NavBar: React.FC = () => {
     messages: MessageOutlinedIcon,
     notifications: NotificationsNoneIcon,
   };
+  const isAuthenticated = useSelector(
+    (store: RootState) => store.auth.isAuthenticated
+  );
+  const dispatch = useDispatch();
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+  };
+
+  const handleSignIn = () => {
+    navigate('/SignIn');
+  };
   return (
     <nav className='w-full h-10 mdh-14 lg:h-16 text-zinc-50 bg-white flex'>
       <button
@@ -79,15 +92,27 @@ const NavBar: React.FC = () => {
         ))}
       </div>
       <div className='h-full text-zinc-500 w-1/3 flex justify-end mr-10 items-center'>
-        <Button
-          data-testid='Sign-in'
-          variant='outlined'
-          className='roundedButton'
-          onClick={() => navigate('/SignIn')}
-        >
-          <PersonOutlineIcon className='signInIcon' />
-          <span className='ml-2 signInText'>Sign in</span>
-        </Button>
+        {isAuthenticated ? (
+          <Button
+            data-testid='logout'
+            variant='outlined'
+            className='roundedButton'
+            onClick={handleLogout}
+          >
+            <PersonOutlineIcon className='logoutIcon' />
+            <span className='ml-2 signInText'>Logout</span>
+          </Button>
+        ) : (
+          <Button
+            data-testid='Sign-in'
+            variant='outlined'
+            className='roundedButton'
+            onClick={handleSignIn}
+          >
+            <PersonOutlineIcon className='signInIcon' />
+            <span className='ml-2 signInText'>Sign in</span>
+          </Button>
+        )}
       </div>
     </nav>
   );

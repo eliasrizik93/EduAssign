@@ -8,6 +8,6 @@ export type User = {
 };
 
 export enum Gender {
-  Male = "male",
-  Female = "female",
+  Male = 'Male',
+  Female = 'Female',
 }
