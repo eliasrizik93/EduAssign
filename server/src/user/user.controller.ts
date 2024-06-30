@@ -38,8 +38,9 @@ export class UserController {
     this.jwtAuthGuard.blacklistToken(token);
     res.clearCookie('jwt', {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
+      expires: new Date(0),
     });
     return res.send({ message: 'Logout successful' });
   }
