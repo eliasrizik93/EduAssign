@@ -1,20 +1,21 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Card, CardSchema } from './card/card.schema';
-import { CardController } from './card/card.controller';
+import { CardModule } from './card/card.module';
+import { UserModule } from './user/user.module';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   imports: [
-    MongooseModule.forRoot(
-      'mongodb+srv://eliasrizik93:ZxTzZrdPKkG4gttl@eduassigncluster.mdcapra.mongodb.net/?retryWrites=true&w=majority&appName=EduAssignCluster',
-      {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      },
-    ),
-    MongooseModule.forFeature([{ name: Card.name, schema: CardSchema }]),
+    MongooseModule.forRoot(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }),
+    CardModule,
+    UserModule,
   ],
-  controllers: [CardController],
+  controllers: [],
   providers: [],
 })
 export class AppModule {}

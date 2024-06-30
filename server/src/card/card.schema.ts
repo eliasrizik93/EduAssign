@@ -9,4 +9,5 @@ export class Card extends Document {
   @Prop()
   text: string;
 }
+
 export const CardSchema = SchemaFactory.createForClass(Card);

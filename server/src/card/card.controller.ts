@@ -7,14 +7,17 @@ import {
   Body,
   Res,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Card } from './card.schema';
 import { Response } from 'express';
+import { JwtAuthGuard } from 'src/user/guards/jwt-auth.guard';
 
 @Controller('cards')
+@UseGuards(JwtAuthGuard)
 export class CardController {
   constructor(@InjectModel(Card.name) private cardModel: Model<Card>) {}
 
