@@ -23,7 +23,7 @@ const SignIn: React.FC = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/profile');
+      navigate('/home');
     }
   }, [isAuthenticated, navigate]);
 

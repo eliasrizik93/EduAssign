@@ -40,16 +40,28 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    logout(state) {
-      state.isAuthenticated = false;
-      state.loading = false;
+    logoutRequest(state) {
+      state.loading = true;
       state.error = null;
+    },
+    logoutSuccess(state) {
+      state.loading = false;
+      state.isAuthenticated = false;
       state.userProfile = null;
-      localStorage.removeItem('auth');
+      localStorage.removeItem('auth'); // Clear any auth data in local storage
+    },
+    logoutFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
     },
   },
 });
-
-export const { loginRequest, loginSuccess, loginFailure, logout } =
-  authSlice.actions;
+export const {
+  loginRequest,
+  loginSuccess,
+  loginFailure,
+  logoutRequest,
+  logoutSuccess,
+  logoutFailure,
+} = authSlice.actions;
 export default authSlice.reducer;

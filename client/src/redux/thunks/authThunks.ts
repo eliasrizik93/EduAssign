@@ -1,11 +1,12 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
 import {
   loginRequest,
   loginSuccess,
   loginFailure,
-  logout,
+  logoutSuccess,
+  logoutFailure,
 } from '../slices/authSlice';
+import axiosInstance from '../../customApi/axiosInstance';
 
 // Define the login thunk
 export const login = createAsyncThunk(
@@ -16,11 +17,10 @@ export const login = createAsyncThunk(
   ) => {
     dispatch(loginRequest());
     try {
-      const response = await axios.post(
-        'http://localhost:3002/users/login',
-        { email, password },
-        { withCredentials: true }
-      );
+      const response = await axiosInstance.post('/users/login', {
+        email,
+        password,
+      });
       dispatch(loginSuccess(response.data.profile));
     } catch (error: any) {
       const errorMessage =
@@ -34,14 +34,11 @@ export const signOut = createAsyncThunk(
   'auth/signOut',
   async (_, { dispatch }) => {
     try {
-      await axios.post(
-        'http://localhost:3002/users/logout',
-        {},
-        { withCredentials: true }
-      );
+      await axiosInstance.post('/users/logout');
+      dispatch(logoutSuccess());
     } catch (error) {
       console.error('Error during logout', error);
+      dispatch(logoutFailure('Logout failed. Please try again.'));
     }
-    dispatch(logout());
   }
 );

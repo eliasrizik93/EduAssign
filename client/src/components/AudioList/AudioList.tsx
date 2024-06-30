@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import './AudioList.scss';
+import axiosInstance from '../../customApi/axiosInstance';
 interface Card {
   _id: string;
   text: string;
@@ -12,6 +13,7 @@ const AudioList: React.FC = () => {
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [index, setIndex] = useState<number>(0);
   const [showAnswer, setShowAnswer] = useState<boolean>(false);
+
   useEffect(() => {
     fetchCards();
     setIndex(0);
@@ -19,11 +21,9 @@ const AudioList: React.FC = () => {
 
   const fetchCards = async () => {
     try {
-      const response = await axios.get<Card[]>('http://localhost:3002/cards', {
-        withCredentials: true,
-      });
+      const response = await axiosInstance.get<Card[]>('/cards');
       setCards(response.data);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching cards:', error);
     }
   };
@@ -33,7 +33,7 @@ const AudioList: React.FC = () => {
       audio.play();
       setPlayingId(id);
       audio.onended = () => setPlayingId(null);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error playing audio:', error);
     }
   };

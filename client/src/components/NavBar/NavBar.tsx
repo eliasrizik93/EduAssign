@@ -7,8 +7,8 @@ import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './NavBar.scss'; // Import SCSS file
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { logout } from '../../redux/slices/authSlice';
+import { AppDispatch, RootState } from '../../redux/store';
+import { signOut } from '../../redux/thunks/authThunks';
 type IconType = 'home' | 'messages' | 'notifications';
 
 interface IconWrapperProps {
@@ -62,10 +62,10 @@ const NavBar: React.FC = () => {
   const isAuthenticated = useSelector(
     (store: RootState) => store.auth.isAuthenticated
   );
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleLogout = () => {
-    dispatch(logout());
+    dispatch(signOut());
     navigate('/');
   };
 
