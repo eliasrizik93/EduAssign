@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import './AudioList.scss';
 import axiosInstance from '../../customApi/axiosInstance';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import NavBar from './components/NavBar/NavBar';
 import MessagesPage from './components/Messages/MessagesPage';
 import SignIn from './components/SignIn/SignIn';
