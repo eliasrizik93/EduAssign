@@ -42,7 +42,7 @@ const SignIn: React.FC = () => {
   const togglePasswordVisibility = () => setShowPassword((prev) => !prev);
 
   const renderPasswordToggleIcon = () => {
-    if (credentials.password.length > 0) return null;
+    if (credentials.password.length === 0) return null;
     return (
       <div
         onClick={togglePasswordVisibility}
