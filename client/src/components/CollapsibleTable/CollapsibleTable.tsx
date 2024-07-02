@@ -7,7 +7,6 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography,
   Paper,
   TableContainer,
   Box,
@@ -210,17 +209,7 @@ const data: Group[] = [
   },
 ];
 
-const colors = [
-  '#ffffff',
-  '#fafafa',
-  '#f5f5f5',
-  '#eeeeee',
-  '#e0e0e0',
-  '#bdbdbd',
-  '#9e9e9e',
-  '#757575',
-  '#616161',
-];
+const colors = ['#f5f5f5', '#eeeeee', '#e0e0e0'];
 const getBackgroundColor = (depth: number) => {
   return colors[depth % colors.length];
 };
@@ -230,25 +219,43 @@ const NestedRow: React.FC<GroupProps> = ({ group }) => {
 
   return (
     <>
-      <TableRow style={{ backgroundColor: getBackgroundColor(group.depth) }}>
-        <TableCell>
-          {group.nestedGroup.length > 0 && (
-            <IconButton
-              aria-label='expand row'
-              size='small'
-              onClick={() => setOpen(!open)}
-            >
-              {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-            </IconButton>
-          )}
+      <TableRow
+        sx={{
+          paddingRight: 0,
+        }}
+        style={{
+          backgroundColor: getBackgroundColor(group.depth),
+          padding: '0',
+        }}
+      >
+        <TableCell style={{ width: '50px' }}>
+          <IconButton
+            aria-label='expand row'
+            size='small'
+            onClick={() => setOpen(!open)}
+          >
+            {group.nestedGroup.length > 0 ? (
+              open ? (
+                <KeyboardArrowUp />
+              ) : (
+                <KeyboardArrowDown />
+              )
+            ) : (
+              <Box width={24} height={24} />
+            )}
+          </IconButton>
         </TableCell>
-        <TableCell component='th' scope='row' align='left'>
-          {group.name}
+        <TableCell align='left'>{group.name}</TableCell>
+        <TableCell align='center' style={{ width: '300px' }}>
+          {group.new}
         </TableCell>
-        <TableCell align='right'>{group.new}</TableCell>
-        <TableCell align='right'>{group.inProgress}</TableCell>
-        <TableCell align='right'>{group.reStudy}</TableCell>
-        <TableCell align='right'>
+        <TableCell align='center' style={{ width: '300px' }}>
+          {group.inProgress}
+        </TableCell>
+        <TableCell align='center' style={{ width: '300px' }}>
+          {group.reStudy}
+        </TableCell>
+        <TableCell align='center' style={{ width: '300px' }}>
           <IconButton aria-label='share row' size='small'>
             <ShareIcon /> Share
           </IconButton>
@@ -260,18 +267,16 @@ const NestedRow: React.FC<GroupProps> = ({ group }) => {
         >
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout='auto' unmountOnExit>
-              <Box sx={{ margin: 1 }}>
-                <Table size='small' aria-label='nested table'>
-                  <TableBody>
-                    {group.nestedGroup.map((subGroup) => (
-                      <NestedRow
-                        group={{ ...subGroup, depth: group.depth + 1 }}
-                        key={subGroup.id}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
-              </Box>
+              <Table size='small' aria-label='nested table'>
+                <TableBody>
+                  {group.nestedGroup.map((subGroup) => (
+                    <NestedRow
+                      group={{ ...subGroup, depth: group.depth + 1 }}
+                      key={subGroup.id}
+                    />
+                  ))}
+                </TableBody>
+              </Table>
             </Collapse>
           </TableCell>
         </TableRow>
@@ -289,10 +294,10 @@ const CollapsibleTable = () => {
           <TableRow>
             <TableCell />
             <TableCell>Name</TableCell>
-            <TableCell align='right'>New</TableCell>
-            <TableCell align='right'>In Progress</TableCell>
-            <TableCell align='right'>Restudy</TableCell>
-            <TableCell align='right'>Share</TableCell>
+            <TableCell align='center'>New</TableCell>
+            <TableCell align='center'>In Progress</TableCell>
+            <TableCell align='center'>Restudy</TableCell>
+            <TableCell align='center'>Share</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
