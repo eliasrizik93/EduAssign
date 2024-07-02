@@ -15,6 +15,10 @@ import {
 import ShareIcon from '@mui/icons-material/Share';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
+import './CollapsibleTable.scss';
+type GroupProps = {
+  group: Group;
+};
 type Group = {
   id: string;
   name: string;
@@ -22,11 +26,8 @@ type Group = {
   inProgress: number;
   reStudy: number;
   isOpen: boolean;
-  group: Group[];
-};
-
-type GroupProps = {
-  group: Group;
+  depth: number;
+  nestedGroup: Group[];
 };
 
 const data: Group[] = [
@@ -37,7 +38,8 @@ const data: Group[] = [
     inProgress: 18,
     reStudy: 5,
     isOpen: false,
-    group: [
+    depth: 0,
+    nestedGroup: [
       {
         id: '1-1',
         name: 'Algebra',
@@ -45,7 +47,8 @@ const data: Group[] = [
         inProgress: 10,
         reStudy: 7,
         isOpen: false,
-        group: [
+        depth: 1,
+        nestedGroup: [
           {
             id: '1-1-1',
             name: 'Quadratics',
@@ -53,7 +56,8 @@ const data: Group[] = [
             inProgress: 5,
             reStudy: 3,
             isOpen: false,
-            group: [],
+            depth: 2,
+            nestedGroup: [],
           },
           {
             id: '1-1-2',
@@ -62,7 +66,8 @@ const data: Group[] = [
             inProgress: 6,
             reStudy: 2,
             isOpen: false,
-            group: [],
+            depth: 2,
+            nestedGroup: [],
           },
           {
             id: '1-1-3',
@@ -71,7 +76,8 @@ const data: Group[] = [
             inProgress: 4,
             reStudy: 1,
             isOpen: false,
-            group: [],
+            depth: 2,
+            nestedGroup: [],
           },
         ],
       },
@@ -82,7 +88,8 @@ const data: Group[] = [
         inProgress: 15,
         reStudy: 10,
         isOpen: false,
-        group: [
+        depth: 1,
+        nestedGroup: [
           {
             id: '1-2-1',
             name: 'Triangles',
@@ -90,7 +97,8 @@ const data: Group[] = [
             inProgress: 8,
             reStudy: 5,
             isOpen: false,
-            group: [],
+            depth: 2,
+            nestedGroup: [],
           },
           {
             id: '1-2-2',
@@ -99,7 +107,8 @@ const data: Group[] = [
             inProgress: 7,
             reStudy: 4,
             isOpen: false,
-            group: [],
+            depth: 2,
+            nestedGroup: [],
           },
         ],
       },
@@ -110,7 +119,8 @@ const data: Group[] = [
         inProgress: 13,
         reStudy: 6,
         isOpen: false,
-        group: [
+        depth: 1,
+        nestedGroup: [
           {
             id: '1-3-1',
             name: 'Derivatives',
@@ -118,7 +128,8 @@ const data: Group[] = [
             inProgress: 6,
             reStudy: 3,
             isOpen: false,
-            group: [],
+            depth: 2,
+            nestedGroup: [],
           },
           {
             id: '1-3-2',
@@ -127,7 +138,71 @@ const data: Group[] = [
             inProgress: 5,
             reStudy: 2,
             isOpen: false,
-            group: [],
+            depth: 2,
+            nestedGroup: [
+              {
+                id: '1-3-1',
+                name: 'Derivatives',
+                new: 9,
+                inProgress: 6,
+                reStudy: 3,
+                isOpen: false,
+                depth: 2,
+                nestedGroup: [],
+              },
+              {
+                id: '1-3-2',
+                name: 'Integrals',
+                new: 8,
+                inProgress: 5,
+                reStudy: 2,
+                isOpen: false,
+                depth: 2,
+                nestedGroup: [
+                  {
+                    id: '1-3-1',
+                    name: 'Derivatives',
+                    new: 9,
+                    inProgress: 6,
+                    reStudy: 3,
+                    isOpen: false,
+                    depth: 2,
+                    nestedGroup: [],
+                  },
+                  {
+                    id: '1-3-2',
+                    name: 'Integrals',
+                    new: 8,
+                    inProgress: 5,
+                    reStudy: 2,
+                    isOpen: false,
+                    depth: 2,
+                    nestedGroup: [
+                      {
+                        id: '1-3-1',
+                        name: 'Derivatives',
+                        new: 9,
+                        inProgress: 6,
+                        reStudy: 3,
+                        isOpen: false,
+                        depth: 2,
+                        nestedGroup: [],
+                      },
+                      {
+                        id: '1-3-2',
+                        name: 'Integrals',
+                        new: 8,
+                        inProgress: 5,
+                        reStudy: 2,
+                        isOpen: false,
+                        depth: 2,
+                        nestedGroup: [],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
           },
         ],
       },
@@ -135,20 +210,37 @@ const data: Group[] = [
   },
 ];
 
+const colors = [
+  '#ffffff',
+  '#fafafa',
+  '#f5f5f5',
+  '#eeeeee',
+  '#e0e0e0',
+  '#bdbdbd',
+  '#9e9e9e',
+  '#757575',
+  '#616161',
+];
+const getBackgroundColor = (depth: number) => {
+  return colors[depth % colors.length];
+};
+
 const NestedRow: React.FC<GroupProps> = ({ group }) => {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <TableRow>
+      <TableRow style={{ backgroundColor: getBackgroundColor(group.depth) }}>
         <TableCell>
-          <IconButton
-            aria-label='expand row'
-            size='small'
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-          </IconButton>
+          {group.nestedGroup.length > 0 && (
+            <IconButton
+              aria-label='expand row'
+              size='small'
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+            </IconButton>
+          )}
         </TableCell>
         <TableCell component='th' scope='row' align='left'>
           {group.name}
@@ -162,15 +254,20 @@ const NestedRow: React.FC<GroupProps> = ({ group }) => {
           </IconButton>
         </TableCell>
       </TableRow>
-      {group.group.length > 0 && (
-        <TableRow>
+      {group.nestedGroup.length > 0 && (
+        <TableRow
+          style={{ backgroundColor: getBackgroundColor(group.depth + 1) }}
+        >
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout='auto' unmountOnExit>
               <Box sx={{ margin: 1 }}>
                 <Table size='small' aria-label='nested table'>
                   <TableBody>
-                    {group.group.map((subGroup) => (
-                      <NestedRow group={subGroup} key={subGroup.id} />
+                    {group.nestedGroup.map((subGroup) => (
+                      <NestedRow
+                        group={{ ...subGroup, depth: group.depth + 1 }}
+                        key={subGroup.id}
+                      />
                     ))}
                   </TableBody>
                 </Table>
@@ -183,7 +280,7 @@ const NestedRow: React.FC<GroupProps> = ({ group }) => {
   );
 };
 
-const CollapsibleTable: React.FC = () => {
+const CollapsibleTable = () => {
   const [tableData, setTableData] = useState(data);
   return (
     <TableContainer component={Paper}>
@@ -200,7 +297,7 @@ const CollapsibleTable: React.FC = () => {
         </TableHead>
         <TableBody>
           {tableData.map((groupTemp) => (
-            <NestedRow group={groupTemp} key={groupTemp.id} />
+            <NestedRow key={groupTemp.id} group={groupTemp} />
           ))}
         </TableBody>
       </Table>
