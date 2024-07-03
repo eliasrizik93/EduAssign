@@ -24,7 +24,6 @@ type Group = {
   new: number;
   inProgress: number;
   reStudy: number;
-  isOpen: boolean;
   depth: number;
   nestedGroup: Group[];
 };
@@ -36,7 +35,6 @@ const data: Group[] = [
     new: 25,
     inProgress: 18,
     reStudy: 5,
-    isOpen: false,
     depth: 0,
     nestedGroup: [
       {
@@ -45,7 +43,6 @@ const data: Group[] = [
         new: 15,
         inProgress: 10,
         reStudy: 7,
-        isOpen: false,
         depth: 1,
         nestedGroup: [
           {
@@ -54,7 +51,6 @@ const data: Group[] = [
             new: 10,
             inProgress: 5,
             reStudy: 3,
-            isOpen: false,
             depth: 2,
             nestedGroup: [],
           },
@@ -64,7 +60,6 @@ const data: Group[] = [
             new: 8,
             inProgress: 6,
             reStudy: 2,
-            isOpen: false,
             depth: 2,
             nestedGroup: [],
           },
@@ -74,7 +69,6 @@ const data: Group[] = [
             new: 7,
             inProgress: 4,
             reStudy: 1,
-            isOpen: false,
             depth: 2,
             nestedGroup: [],
           },
@@ -86,7 +80,6 @@ const data: Group[] = [
         new: 20,
         inProgress: 15,
         reStudy: 10,
-        isOpen: false,
         depth: 1,
         nestedGroup: [
           {
@@ -95,7 +88,6 @@ const data: Group[] = [
             new: 12,
             inProgress: 8,
             reStudy: 5,
-            isOpen: false,
             depth: 2,
             nestedGroup: [],
           },
@@ -105,7 +97,6 @@ const data: Group[] = [
             new: 10,
             inProgress: 7,
             reStudy: 4,
-            isOpen: false,
             depth: 2,
             nestedGroup: [],
           },
@@ -117,7 +108,6 @@ const data: Group[] = [
         new: 18,
         inProgress: 13,
         reStudy: 6,
-        isOpen: false,
         depth: 1,
         nestedGroup: [
           {
@@ -126,7 +116,6 @@ const data: Group[] = [
             new: 9,
             inProgress: 6,
             reStudy: 3,
-            isOpen: false,
             depth: 2,
             nestedGroup: [],
           },
@@ -136,7 +125,6 @@ const data: Group[] = [
             new: 8,
             inProgress: 5,
             reStudy: 2,
-            isOpen: false,
             depth: 2,
             nestedGroup: [
               {
@@ -145,7 +133,6 @@ const data: Group[] = [
                 new: 9,
                 inProgress: 6,
                 reStudy: 3,
-                isOpen: false,
                 depth: 2,
                 nestedGroup: [],
               },
@@ -155,7 +142,6 @@ const data: Group[] = [
                 new: 8,
                 inProgress: 5,
                 reStudy: 2,
-                isOpen: false,
                 depth: 2,
                 nestedGroup: [
                   {
@@ -164,7 +150,6 @@ const data: Group[] = [
                     new: 9,
                     inProgress: 6,
                     reStudy: 3,
-                    isOpen: false,
                     depth: 2,
                     nestedGroup: [],
                   },
@@ -174,7 +159,6 @@ const data: Group[] = [
                     new: 8,
                     inProgress: 5,
                     reStudy: 2,
-                    isOpen: false,
                     depth: 2,
                     nestedGroup: [
                       {
@@ -183,7 +167,6 @@ const data: Group[] = [
                         new: 9,
                         inProgress: 6,
                         reStudy: 3,
-                        isOpen: false,
                         depth: 2,
                         nestedGroup: [],
                       },
@@ -193,7 +176,6 @@ const data: Group[] = [
                         new: 8,
                         inProgress: 5,
                         reStudy: 2,
-                        isOpen: false,
                         depth: 2,
                         nestedGroup: [],
                       },
@@ -206,6 +188,33 @@ const data: Group[] = [
         ],
       },
     ],
+  },
+  {
+    id: '2',
+    name: 'Mathematics2',
+    new: 25,
+    inProgress: 18,
+    reStudy: 5,
+    depth: 0,
+    nestedGroup: [],
+  },
+  {
+    id: '3',
+    name: 'Mathematics3',
+    new: 25,
+    inProgress: 18,
+    reStudy: 5,
+    depth: 0,
+    nestedGroup: [],
+  },
+  {
+    id: '4',
+    name: 'Mathematics4',
+    new: 25,
+    inProgress: 18,
+    reStudy: 5,
+    depth: 0,
+    nestedGroup: [],
   },
 ];
 
@@ -287,26 +296,29 @@ const NestedRow: React.FC<GroupProps> = ({ group }) => {
 
 const CollapsibleTable = () => {
   const [tableData, setTableData] = useState(data);
+
   return (
-    <TableContainer component={Paper}>
-      <Table aria-label='collapsible table'>
-        <TableHead>
-          <TableRow>
-            <TableCell />
-            <TableCell>Name</TableCell>
-            <TableCell align='center'>New</TableCell>
-            <TableCell align='center'>In Progress</TableCell>
-            <TableCell align='center'>Restudy</TableCell>
-            <TableCell align='center'>Share</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {tableData.map((groupTemp) => (
-            <NestedRow key={groupTemp.id} group={groupTemp} />
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <>
+      <TableContainer component={Paper}>
+        <Table aria-label='collapsible table'>
+          <TableHead>
+            <TableRow>
+              <TableCell />
+              <TableCell>Name</TableCell>
+              <TableCell align='center'>New</TableCell>
+              <TableCell align='center'>In Progress</TableCell>
+              <TableCell align='center'>Restudy</TableCell>
+              <TableCell align='center'>Share</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {tableData.map((groupTemp) => (
+              <NestedRow key={groupTemp.id} group={groupTemp} />
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </>
   );
 };
 
