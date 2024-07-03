@@ -2,14 +2,19 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Apply global styles */
 body {
   @apply h-full bg-gray-100 overflow-x-hidden overflow-y-hidden;
 }
 
 html,
 #root {
-  @apply h-full overflow-x-hidden overflow-y-hidden;
+  @apply h-full;
 }
-* {
-  box-sizing: content-box;
+
+/* Apply box-sizing globally */
+*,
+*::before,
+*::after {
+  @apply box-border;
 }
