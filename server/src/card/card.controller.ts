@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Query,
+  HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/create-card.dto';
@@ -20,8 +22,20 @@ export class CardController {
   constructor(private readonly cardService: CardService) {}
 
   @Post()
-  create(@Body() createCardDto: CreateCardDto) {
-    return this.cardService.create(createCardDto);
+  async create(@Body() createCardDto: CreateCardDto) {
+    try {
+      const result = await this.cardService.create(createCardDto);
+      return {
+        status: HttpStatus.CREATED,
+        message: 'Card created successfully',
+        data: result,
+      };
+    } catch (error) {
+      throw new HttpException(
+        `Failed to create card: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get()
