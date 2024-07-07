@@ -20,7 +20,7 @@ const AudioList: React.FC = () => {
 
   const fetchCards = async () => {
     try {
-      const response = await axiosInstance.get<Card[]>('/cards');
+      const response = await axiosInstance.get<Card[]>('/card');
       setCards(response.data);
     } catch (error: any) {
       console.error('Error fetching cards:', error);
@@ -28,7 +28,7 @@ const AudioList: React.FC = () => {
   };
   const playAudio = async (id: string) => {
     try {
-      const audio = new Audio(`http://localhost:3002/cards/${id}/audio`);
+      const audio = new Audio(`http://localhost:3002/card/${id}/audio`);
       audio.play();
       setPlayingId(id);
       audio.onended = () => setPlayingId(null);
