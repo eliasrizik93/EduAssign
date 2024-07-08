@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
-import CollapsibleTable from '../CollapsibleTable/CollapsibleTable';
 import CreateCard from '../Cards/CreateCard/CreateCard';
+import CollapsibleTable from '../CollapsibleTable/CollapsibleTable';
 
 const Home: React.FC = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -15,6 +15,6 @@ const Home: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  return <CreateCard />;
+  return <CollapsibleTable />;
 };
 export default Home;

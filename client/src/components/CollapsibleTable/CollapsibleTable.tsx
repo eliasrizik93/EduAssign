@@ -1,125 +1,92 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axiosInstance from '../../customApi/axiosInstance';
+import NestedRow from './NestedRow';
 import {
-  Button,
-  Table,
-  TableBody,
-  TableCell,
   TableContainer,
+  Table,
   TableHead,
   TableRow,
+  TableCell,
+  TableBody,
   Paper,
+  Button,
 } from '@mui/material';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import { v4 as uuidv4 } from 'uuid';
 import GroupModal from './GroupModal';
-import NestedRow from './NestedRow';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store';
 
-type Group = {
-  id: string;
+type CreateGroupDto = {
   name: string;
+  userEmail: string;
+  totalCards: number;
   new: number;
   inProgress: number;
-  reStudy: number;
-  depth: number;
-  nestedGroup: Group[];
+  studied: number;
+  parentGroupId: string | null;
+  cardsId: string[];
 };
 
-const initialData: Group[] = [
-  {
-    id: '1',
-    name: 'Mathematics',
-    new: 25,
-    inProgress: 18,
-    reStudy: 5,
-    depth: 0,
-    nestedGroup: [
-      {
-        id: '1-1',
-        name: 'Algebra',
-        new: 15,
-        inProgress: 10,
-        reStudy: 7,
-        depth: 1,
-        nestedGroup: [],
-      },
-      {
-        id: '1-2',
-        name: 'Geometry',
-        new: 20,
-        inProgress: 15,
-        reStudy: 10,
-        depth: 1,
-        nestedGroup: [],
-      },
-      {
-        id: '1-3',
-        name: 'Calculus',
-        new: 18,
-        inProgress: 13,
-        reStudy: 6,
-        depth: 1,
-        nestedGroup: [
-          {
-            id: '1-3-1',
-            name: 'Derivatives',
-            new: 9,
-            inProgress: 6,
-            reStudy: 3,
-            depth: 2,
-            nestedGroup: [],
-          },
-          {
-            id: '1-3-2',
-            name: 'Integrals',
-            new: 8,
-            inProgress: 5,
-            reStudy: 2,
-            depth: 2,
-            nestedGroup: [],
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: '2',
-    name: 'Mathematics2',
-    new: 25,
-    inProgress: 18,
-    reStudy: 5,
-    depth: 0,
-    nestedGroup: [],
-  },
-  {
-    id: '3',
-    name: 'Mathematics3',
-    new: 25,
-    inProgress: 18,
-    reStudy: 5,
-    depth: 0,
-    nestedGroup: [],
-  },
-];
+export type Group = {
+  id: string;
+  name: string;
+  userEmail: string;
+  totalCards: number;
+  new: number;
+  inProgress: number;
+  studied: number;
+  parent: string | null;
+  children: Group[];
+  cards: string[];
+  createdAt: string;
+  updatedAt: string;
+};
 
 const CollapsibleTable: React.FC = () => {
-  const [tableData, setTableData] = useState<Group[]>(initialData);
+  const [tableData, setTableData] = useState<Group[]>([]);
   const [open, setOpen] = useState(false);
-
+  const userProfile = useSelector((state: RootState) => state.auth.userProfile);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const handleAddGroup = (groupName: string) => {
-    const newGroup: Group = {
-      id: uuidv4(),
+  const getGroups = async () => {
+    try {
+      const response = await axiosInstance.get('/group', {
+        params: { userEmail: userProfile?.email },
+      });
+      const data = response.data;
+      setTableData(data);
+    } catch (error) {
+      console.error('Error fetching groups:', error);
+    }
+  };
+
+  useEffect(() => {
+    getGroups();
+  }, []);
+
+  const handleAddGroup = async (groupName: string) => {
+    const newGroup: CreateGroupDto = {
       name: groupName,
+      userEmail: userProfile?.email || '',
+      totalCards: 0,
       new: 0,
       inProgress: 0,
-      reStudy: 0,
-      depth: 0,
-      nestedGroup: [],
+      studied: 0,
+      parentGroupId: null,
+      cardsId: [],
     };
 
-    setTableData([...tableData, newGroup]);
+    try {
+      const response = await axiosInstance.post<Group>('/group', newGroup);
+      const createdGroup = response.data;
+
+      setTableData((prevData) => [...prevData, createdGroup]);
+    } catch (error) {
+      console.error('Error creating group:', error);
+    }
+
+    handleClose();
   };
 
   return (
@@ -154,7 +121,7 @@ const CollapsibleTable: React.FC = () => {
           </TableHead>
           <TableBody>
             {tableData.map((groupTemp) => (
-              <NestedRow key={groupTemp.id} group={groupTemp} />
+              <NestedRow key={groupTemp.id} group={groupTemp} level={0} />
             ))}
           </TableBody>
         </Table>

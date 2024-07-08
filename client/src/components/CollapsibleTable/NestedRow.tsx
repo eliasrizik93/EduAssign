@@ -1,36 +1,31 @@
 import React, { useState } from 'react';
 import {
-  Collapse,
+  TableRow,
+  TableCell,
   IconButton,
+  Collapse,
   Table,
   TableBody,
-  TableCell,
-  TableRow,
   Box,
 } from '@mui/material';
-import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import ShareIcon from '@mui/icons-material/Share';
-import './NestedRow.scss';
+import {
+  KeyboardArrowUp,
+  KeyboardArrowDown,
+  Share as ShareIcon,
+} from '@mui/icons-material';
+import { Group } from './CollapsibleTable';
+
 type GroupProps = {
   group: Group;
+  level: number; // Add level to keep track of the nesting level
 };
 
-type Group = {
-  id: string;
-  name: string;
-  new: number;
-  inProgress: number;
-  reStudy: number;
-  depth: number;
-  nestedGroup: Group[];
+const getBackgroundColor = (level: number) => {
+  const colors = ['#fff', '#f7f7f7', '#e7e7e7']; // Example colors for different levels
+  return colors[level % colors.length];
 };
 
-const colors = ['#f5f5f5', '#eeeeee', '#e0e0e0'];
-const getBackgroundColor = (depth: number) => {
-  return colors[depth % colors.length];
-};
-
-const NestedRow: React.FC<GroupProps> = ({ group }) => {
+const NestedRow: React.FC<GroupProps> = ({ group, level }) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -40,7 +35,7 @@ const NestedRow: React.FC<GroupProps> = ({ group }) => {
           paddingRight: 0,
         }}
         style={{
-          backgroundColor: getBackgroundColor(group.depth),
+          backgroundColor: getBackgroundColor(level),
           padding: '0',
         }}
       >
@@ -50,7 +45,7 @@ const NestedRow: React.FC<GroupProps> = ({ group }) => {
             size='small'
             onClick={() => setOpen(!open)}
           >
-            {group.nestedGroup.length > 0 ? (
+            {group.children.length > 0 ? (
               open ? (
                 <KeyboardArrowUp />
               ) : (
@@ -69,7 +64,7 @@ const NestedRow: React.FC<GroupProps> = ({ group }) => {
           {group.inProgress}
         </TableCell>
         <TableCell align='center' style={{ width: '300px' }}>
-          {group.reStudy}
+          {group.studied}
         </TableCell>
         <TableCell align='center' style={{ width: '300px' }}>
           <IconButton aria-label='share row' size='small'>
@@ -77,17 +72,16 @@ const NestedRow: React.FC<GroupProps> = ({ group }) => {
           </IconButton>
         </TableCell>
       </TableRow>
-      {group.nestedGroup.length > 0 && (
-        <TableRow
-          style={{ backgroundColor: getBackgroundColor(group.depth + 1) }}
-        >
+      {group.children.length > 0 && (
+        <TableRow style={{ backgroundColor: getBackgroundColor(level + 1) }}>
           <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
             <Collapse in={open} timeout='auto' unmountOnExit>
               <Table size='small' aria-label='nested table'>
                 <TableBody>
-                  {group.nestedGroup.map((subGroup) => (
+                  {group.children.map((subGroup) => (
                     <NestedRow
-                      group={{ ...subGroup, depth: group.depth + 1 }}
+                      group={subGroup}
+                      level={level + 1}
                       key={subGroup.id}
                     />
                   ))}
