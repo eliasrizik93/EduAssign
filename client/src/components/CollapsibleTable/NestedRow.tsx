@@ -9,15 +9,17 @@ import {
   Box,
 } from '@mui/material';
 import {
-  KeyboardArrowUp,
-  KeyboardArrowDown,
+  KeyboardArrowUp as KeyboardArrowUpIcon,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
   Share as ShareIcon,
+  Delete as DeleteIcon,
 } from '@mui/icons-material';
 import { Group } from './CollapsibleTable';
 
 type GroupProps = {
   group: Group;
-  level: number; // Add level to keep track of the nesting level
+  level: number;
+  handleDeleteGroup: (id: string) => void;
 };
 
 const getBackgroundColor = (level: number) => {
@@ -25,7 +27,11 @@ const getBackgroundColor = (level: number) => {
   return colors[level % colors.length];
 };
 
-const NestedRow: React.FC<GroupProps> = ({ group, level }) => {
+const NestedRow: React.FC<GroupProps> = ({
+  group,
+  level,
+  handleDeleteGroup,
+}) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -47,9 +53,9 @@ const NestedRow: React.FC<GroupProps> = ({ group, level }) => {
           >
             {group.children.length > 0 ? (
               open ? (
-                <KeyboardArrowUp />
+                <KeyboardArrowUpIcon />
               ) : (
-                <KeyboardArrowDown />
+                <KeyboardArrowDownIcon />
               )
             ) : (
               <Box width={24} height={24} />
@@ -68,7 +74,16 @@ const NestedRow: React.FC<GroupProps> = ({ group, level }) => {
         </TableCell>
         <TableCell align='center' style={{ width: '300px' }}>
           <IconButton aria-label='share row' size='small'>
-            <ShareIcon /> Share
+            <ShareIcon />
+          </IconButton>
+        </TableCell>
+        <TableCell align='center' style={{ width: '300px' }}>
+          <IconButton
+            aria-label='share row'
+            size='small'
+            onClick={() => handleDeleteGroup(group.id)}
+          >
+            <DeleteIcon />
           </IconButton>
         </TableCell>
       </TableRow>
@@ -83,6 +98,7 @@ const NestedRow: React.FC<GroupProps> = ({ group, level }) => {
                       group={subGroup}
                       level={level + 1}
                       key={subGroup.id}
+                      handleDeleteGroup={handleDeleteGroup}
                     />
                   ))}
                 </TableBody>

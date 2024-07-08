@@ -49,21 +49,20 @@ const CollapsibleTable: React.FC = () => {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const getGroups = async () => {
-    try {
-      const response = await axiosInstance.get('/group', {
-        params: { userEmail: userProfile?.email },
-      });
-      const data = response.data;
-      setTableData(data);
-    } catch (error) {
-      console.error('Error fetching groups:', error);
-    }
-  };
-
   useEffect(() => {
+    const getGroups = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/group/user/${userProfile?.email}`
+        );
+        const data = response.data;
+        setTableData(data);
+      } catch (error) {
+        console.error('Error fetching groups:', error);
+      }
+    };
     getGroups();
-  }, []);
+  }, [userProfile]);
 
   const handleAddGroup = async (groupName: string) => {
     const newGroup: CreateGroupDto = {
@@ -87,6 +86,16 @@ const CollapsibleTable: React.FC = () => {
     }
 
     handleClose();
+  };
+
+  const handleDeleteGroup = async (groupId: string) => {
+    try {
+      const response = await axiosInstance.delete(`/group/${groupId}`);
+      const data = response.data;
+      setTableData(data);
+    } catch (error) {
+      console.error('Error deleting group:', error);
+    }
   };
 
   return (
@@ -117,11 +126,17 @@ const CollapsibleTable: React.FC = () => {
               <TableCell align='center'>In Progress</TableCell>
               <TableCell align='center'>Restudy</TableCell>
               <TableCell align='center'>Share</TableCell>
+              <TableCell align='center'>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {tableData.map((groupTemp) => (
-              <NestedRow key={groupTemp.id} group={groupTemp} level={0} />
+              <NestedRow
+                key={groupTemp.id}
+                group={groupTemp}
+                level={0}
+                handleDeleteGroup={handleDeleteGroup}
+              />
             ))}
           </TableBody>
         </Table>
