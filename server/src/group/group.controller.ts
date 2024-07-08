@@ -1,63 +1,46 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
-  Patch,
+  Get,
   Param,
   Delete,
-  UseGuards,
-  Query,
+  Put,
 } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
-import { JwtAuthGuard } from 'src/user/guards/jwt-auth.guard';
+import { Group } from './schemas/group.schema';
 
 @Controller('group')
-@UseGuards(JwtAuthGuard)
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
   @Post()
-  create(@Body() createGroupDto: CreateGroupDto) {
+  async create(@Body() createGroupDto: CreateGroupDto): Promise<Group> {
     return this.groupService.create(createGroupDto);
   }
 
-  @Get()
-  findAll(@Query('userEmail') userEmail: string) {
-    return this.groupService.findByUserEmail(userEmail);
-  }
-
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  async findOne(@Param('id') id: string): Promise<Group> {
     return this.groupService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateGroupDto: UpdateGroupDto) {
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateGroupDto: UpdateGroupDto,
+  ): Promise<Group> {
     return this.groupService.update(id, updateGroupDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  async remove(@Param('id') id: string): Promise<Group[]> {
     return this.groupService.remove(id);
   }
 
-  @Post(':groupId/parent/:parentId')
-  moveGroupToParent(
-    @Param('groupId') groupId: string,
-    @Param('parentId') parentId: string,
-  ) {
-    const newParentId = parentId === 'null' ? null : parentId;
-    return this.groupService.moveGroupToParent(groupId, newParentId);
-  }
-
-  @Post(':groupId/move/:newParentId')
-  moveGroupToAnotherChild(
-    @Param('groupId') groupId: string,
-    @Param('newParentId') newParentId: string,
-  ) {
-    return this.groupService.moveGroupToAnotherChild(groupId, newParentId);
+  @Get('user/:email')
+  async findByUserEmail(@Param('email') email: string): Promise<Group[]> {
+    return this.groupService.findByUserEmail(email);
   }
 }

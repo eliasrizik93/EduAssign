@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { Group } from './schemas/group.schema';
@@ -11,7 +15,22 @@ export class GroupService {
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
   ) {}
 
-  create(createGroupDto: CreateGroupDto) {
+  async create(createGroupDto: CreateGroupDto) {
+    const { name, userEmail } = createGroupDto;
+
+    // Check if a group with the same name and userEmail already exists
+    const existingGroup = await this.groupModel
+      .findOne({ name, userEmail })
+      .exec();
+
+    if (existingGroup) {
+      // Return the existing group or handle the conflict as needed
+      throw new ConflictException(
+        'Group with this name already exists for this user',
+      );
+    }
+
+    // If it does not exist, create a new group
     const createGroup = new this.groupModel(createGroupDto);
     return createGroup.save();
   }
@@ -46,7 +65,7 @@ export class GroupService {
     return updatedGroup;
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<Group[]> {
     const group = await this.groupModel.findById(id).exec();
     if (!group) {
       throw new NotFoundException(`Group with ID ${id} not found`);
@@ -62,6 +81,7 @@ export class GroupService {
 
     // Delete the group itself
     await this.groupModel.deleteOne({ _id: group._id }).exec();
+    return this.findByUserEmail(group.userEmail);
   }
 
   async moveGroupToParent(
