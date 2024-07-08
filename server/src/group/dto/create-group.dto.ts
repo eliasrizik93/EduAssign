@@ -7,13 +7,10 @@ import {
   ArrayMinSize,
   ArrayUnique,
   IsEmail,
+  IsNumber,
 } from 'class-validator';
 
 export class CreateGroupDto {
-  @IsNotEmpty()
-  @IsString()
-  readonly id: string;
-
   @IsNotEmpty()
   @IsString()
   readonly name: string;
@@ -22,21 +19,29 @@ export class CreateGroupDto {
   @IsEmail()
   readonly userEmail: string;
 
-  @IsArray()
-  @ArrayMinSize(1)
-  @ArrayUnique()
-  @IsString({ each: true })
-  readonly cardsId: string[];
-
   @IsOptional()
   @IsString()
   readonly parentGroupId?: string;
 
   @IsOptional()
-  @IsDateString()
-  readonly createdAt?: string;
+  @IsArray()
+  @ArrayUnique()
+  @IsString({ each: true })
+  readonly cardsId?: string[];
 
   @IsOptional()
-  @IsDateString()
-  readonly updatedAt?: string;
+  @IsNumber()
+  readonly totalCards: number = 0;
+
+  @IsOptional()
+  @IsNumber()
+  readonly new: number = 0;
+
+  @IsOptional()
+  @IsNumber()
+  readonly inProgress: number = 0;
+
+  @IsOptional()
+  @IsNumber()
+  readonly studied: number = 0;
 }

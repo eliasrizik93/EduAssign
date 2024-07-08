@@ -23,6 +23,18 @@ export class Group extends Document {
 
   @Prop({ default: Date.now })
   updatedAt: Date;
+
+  @Prop({ default: 0 })
+  totalCards: number;
+
+  @Prop({ default: 0 })
+  new: number;
+
+  @Prop({ default: 0 })
+  inProgress: number;
+
+  @Prop({ default: 0 })
+  studied: number;
 }
 
 export const GroupSchema = SchemaFactory.createForClass(Group);

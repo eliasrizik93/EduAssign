@@ -23,6 +23,10 @@ export class CreateCardDto {
   readonly groupId: string;
 
   @IsOptional()
+  @IsString()
+  readonly state?: 'new' | 'inProgress' | 'restudy';
+
+  @IsOptional()
   @IsDateString()
   readonly createdAt?: string;
 
