@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import './AudioList.scss';
-import axiosInstance from '../../customApi/axiosInstance';
+import axiosInstance from '../../CustomApi/axiosInstance';
 interface Card {
   _id: string;
   text: string;

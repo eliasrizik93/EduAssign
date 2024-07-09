@@ -6,7 +6,7 @@ import {
   logoutSuccess,
   logoutFailure,
 } from '../slices/authSlice';
-import axiosInstance from '../../customApi/axiosInstance';
+import axiosInstance from '../../CustomApi/axiosInstance';
 
 // Define the login thunk
 export const login = createAsyncThunk(

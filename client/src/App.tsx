@@ -1,10 +1,10 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import NavBar from './components/NavBar/NavBar';
-import MessagesPage from './components/Messages/MessagesPage';
-import SignIn from './components/SignIn/SignIn';
-import Home from './components/Home/Home';
-import PrivateRoute from './components/route/PrivateRoute';
+import NavBar from './Components/NavBar/NavBar';
+import MessagesPage from './Components/Messages/MessagesPage';
+import SignIn from './Components/SignIn/SignIn';
+import Home from './Components/Home/Home';
+import PrivateRoute from './Components/route/PrivateRoute';
 
 const App: React.FC = () => {
   const homePaths = ['', '/', '/home'];

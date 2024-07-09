@@ -2,8 +2,8 @@ import { TextField, Paper } from '@mui/material';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import SendIcon from '@mui/icons-material/Send';
 import { useState } from 'react';
-import Message from './Message/Message';
 import './MessageContent.scss';
+import Message from './Message';
 
 const MessageContent: React.FC = () => {
   const [newMessage, setNewMessage] = useState<string>('');

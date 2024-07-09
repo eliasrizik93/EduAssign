@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useState } from 'react';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
-import './SidebarSearch.scss';
+import './SideBarSearch.scss';
 
 const REGEX_CHECK = /\d|[^\w\s]/; // No numbers or special characters
 
@@ -9,7 +9,7 @@ type Props = {
   handleSearch: (userName: string) => void;
 };
 
-const SidebarSearch: React.FC<Props> = ({ handleSearch }) => {
+const SideBarSearch: React.FC<Props> = ({ handleSearch }) => {
   const [inputIsFocused, setInputIsFocused] = useState<boolean>(false);
   const [searchValue, setSearchValue] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -63,4 +63,4 @@ const SidebarSearch: React.FC<Props> = ({ handleSearch }) => {
   );
 };
 
-export default SidebarSearch;
+export default SideBarSearch;

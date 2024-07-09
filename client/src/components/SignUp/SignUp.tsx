@@ -23,9 +23,9 @@ import {
   DialogContent,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { days, years } from '../../common/Funcitons';
-import { months } from '../../common/Constants';
-import { Gender } from '../../common/TypesAndEnums';
+import { days, years } from '../../Common/Funcitons';
+import { months } from '../../Common/Constants';
+import { Gender } from '../../Common/TypesAndEnums';
 import axios from 'axios';
 
 type propsType = {

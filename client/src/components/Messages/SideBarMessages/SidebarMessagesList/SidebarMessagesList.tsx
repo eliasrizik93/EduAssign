@@ -3,9 +3,9 @@ import {
   capitalize,
   getInitials,
   getUserColor,
-} from '../../../../common/Funcitons';
+} from '../../../../Common/Funcitons';
 import DOMPurify from 'dompurify';
-import { User } from '../../../../common/TypesAndEnums';
+import { User } from '../../../../Common/TypesAndEnums';
 import { useState } from 'react';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CheckIcon from '@mui/icons-material/Check';
@@ -13,14 +13,14 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeleteIcon from '@mui/icons-material/Delete';
 import NotificationsOffIcon from '@mui/icons-material/NotificationsOff';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import './SidebarMessagesList.scss';
+import './SideBarMessagesList.scss';
 
 // Define types for better readability
 type AnchorElementMap = { [key: number]: HTMLElement | null };
 type MutedUsers = { [key: number]: boolean };
 type StateSetter<T> = React.Dispatch<React.SetStateAction<T>>;
 
-type SidebarMessagesListProps = {
+type SideBarMessagesListProps = {
   usersList: User[];
   removeMessageChat: (id: number) => void;
 };
@@ -41,7 +41,7 @@ const menuStyle: React.CSSProperties = {
   width: '300px',
 };
 
-const SidebarMessagesList = (props: SidebarMessagesListProps) => {
+const SideBarMessagesList = (props: SideBarMessagesListProps) => {
   const { removeMessageChat } = props;
   const [menuAnchorMap, setMenuAnchorMap] = useState<AnchorElementMap>({});
   const [mutedUsers, setMutedUsers] = useState<MutedUsers>({});
@@ -224,4 +224,4 @@ const SidebarMessagesList = (props: SidebarMessagesListProps) => {
   );
 };
 
-export default SidebarMessagesList;
+export default SideBarMessagesList;

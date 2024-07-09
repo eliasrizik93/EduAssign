@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import { User } from '../../../common/TypesAndEnums';
-import SidebarMessagesList from './SidebarMessagesList/SidebarMessagesList';
-import SidebarSearch from './SidebarSearch/SidebarSearch';
+import { User } from '../../../Common/TypesAndEnums';
+import SideBarMessagesList from './SideBarMessagesList';
+import SideBarSearch from './SideBarSearch';
 
 const initialUsersList: User[] = [
   {
@@ -104,7 +104,7 @@ const initialUsersList: User[] = [
     iconImage: '',
   },
 ];
-const SidebarMessages = () => {
+const SideBarMessages = () => {
   const [usersList, setUsersList] = useState<User[]>(initialUsersList);
 
   const handleSearch = (userName: string): void => {
@@ -119,9 +119,9 @@ const SidebarMessages = () => {
   };
   return (
     <div className='w-1/5 pr-2 pl-5 pt-3'>
-      <SidebarSearch handleSearch={handleSearch} />
+      <SideBarSearch handleSearch={handleSearch} />
       <div className='h-full w-full'>
-        <SidebarMessagesList
+        <SideBarMessagesList
           usersList={usersList}
           removeMessageChat={removeMessageChat}
         />
@@ -130,4 +130,4 @@ const SidebarMessages = () => {
   );
 };
 
-export default SidebarMessages;
+export default SideBarMessages;
