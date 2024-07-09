@@ -11,7 +11,7 @@ import {
   Button,
 } from '@mui/material';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import GroupModal from './CreateGroup/CreateGroupModal';
+import CreateGroupModal from './CreateGroupModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import GroupRow from './GroupRow';
@@ -110,7 +110,7 @@ const GroupsCenter: React.FC = () => {
       >
         Create Group
       </Button>
-      <GroupModal
+      <CreateGroupModal
         open={open}
         handleClose={handleClose}
         handleAddGroup={handleAddGroup}
