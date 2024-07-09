@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { login } from '../../redux/thunks/authThunks';
 import './SignIn.scss';
+import SignUp from '../SignUp';
 
 type Credentials = { email: string; password: string };
 
@@ -15,6 +16,7 @@ const SignIn: React.FC = () => {
     password: '',
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [isSignUpOpen, setIsSignUpOpen] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const { isAuthenticated, loading, error } = useSelector(
@@ -53,6 +55,7 @@ const SignIn: React.FC = () => {
       </div>
     );
   };
+  const handleSignUp = (isOpen: boolean) => setIsSignUpOpen(isOpen);
 
   return (
     <div className='flex justify-center items-center h-screen'>
@@ -103,9 +106,16 @@ const SignIn: React.FC = () => {
         <Button
           variant='contained'
           style={{ backgroundColor: 'green', color: 'white' }}
+          onClick={() => handleSignUp(true)}
         >
           Sign Up
         </Button>
+        {isSignUpOpen && (
+          <SignUp
+            isSignUpModalOpen={isSignUpOpen}
+            handleSignUpModal={handleSignUp}
+          />
+        )}
       </form>
     </div>
   );

@@ -12,13 +12,13 @@ const style = {
   p: 4,
 };
 
-interface GroupModalProps {
+interface CreateGroupProps {
   open: boolean;
   handleClose: () => void;
   handleAddGroup: (groupName: string) => void;
 }
 
-const GroupModal: React.FC<GroupModalProps> = ({
+const CreateGroup: React.FC<CreateGroupProps> = ({
   open,
   handleClose,
   handleAddGroup,
@@ -62,4 +62,4 @@ const GroupModal: React.FC<GroupModalProps> = ({
   );
 };
 
-export default GroupModal;
+export default CreateGroup;

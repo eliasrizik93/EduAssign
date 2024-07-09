@@ -14,7 +14,7 @@ import {
   Share as ShareIcon,
   Delete as DeleteIcon,
 } from '@mui/icons-material';
-import { Group } from './CollapsibleTable';
+import { Group } from '../GroupsCenter';
 
 type GroupProps = {
   group: Group;
@@ -27,7 +27,7 @@ const getBackgroundColor = (level: number) => {
   return colors[level % colors.length];
 };
 
-const NestedRow: React.FC<GroupProps> = ({
+const GroupRow: React.FC<GroupProps> = ({
   group,
   level,
   handleDeleteGroup,
@@ -94,7 +94,7 @@ const NestedRow: React.FC<GroupProps> = ({
               <Table size='small' aria-label='nested table'>
                 <TableBody>
                   {group.children.map((subGroup) => (
-                    <NestedRow
+                    <GroupRow
                       group={subGroup}
                       level={level + 1}
                       key={subGroup.id}
@@ -111,4 +111,4 @@ const NestedRow: React.FC<GroupProps> = ({
   );
 };
 
-export default NestedRow;
+export default GroupRow;

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../CustomApi/axiosInstance';
-import NestedRow from './NestedRow';
 import {
   TableContainer,
   Table,
@@ -12,9 +11,10 @@ import {
   Button,
 } from '@mui/material';
 import AddBoxIcon from '@mui/icons-material/AddBox';
-import GroupModal from './GroupModal';
+import GroupModal from './CreateGroup/CreateGroupModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import GroupRow from './GroupRow';
 
 type CreateGroupDto = {
   name: string;
@@ -42,7 +42,7 @@ export type Group = {
   updatedAt: string;
 };
 
-const CollapsibleTable: React.FC = () => {
+const GroupsCenter: React.FC = () => {
   const [tableData, setTableData] = useState<Group[]>([]);
   const [open, setOpen] = useState(false);
   const userProfile = useSelector((state: RootState) => state.auth.userProfile);
@@ -131,7 +131,7 @@ const CollapsibleTable: React.FC = () => {
           </TableHead>
           <TableBody>
             {tableData.map((groupTemp) => (
-              <NestedRow
+              <GroupRow
                 key={groupTemp.id}
                 group={groupTemp}
                 level={0}
@@ -145,4 +145,4 @@ const CollapsibleTable: React.FC = () => {
   );
 };
 
-export default CollapsibleTable;
+export default GroupsCenter;
