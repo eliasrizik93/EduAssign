@@ -1,0 +1,62 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import axiosInstance from '../../CustomApi/axiosInstance';
+import { Group } from '../slices/groupSlice';
+import { CreateGroupDto } from '../../Components/GroupsCenter/GroupsCenter';
+
+// Fetch groups
+export const fetchGroups = createAsyncThunk(
+  'groups/fetchGroups',
+  async (userEmail: string | null, { rejectWithValue }) => {
+    if (!userEmail) {
+      return rejectWithValue('User email is required to fetch groups');
+    }
+    try {
+      const response = await axiosInstance.get(`/group/user/${userEmail}`);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          'Failed to fetch groups'
+      );
+    }
+  }
+);
+
+// Add group
+export const addGroup = createAsyncThunk(
+  'groups/addGroup',
+  async (
+    newGroup: Omit<
+      CreateGroupDto,
+      'id' | 'createdAt' | 'updatedAt' | 'children'
+    >,
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.post<Group>('/group', newGroup);
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message || error.message || 'Failed to add group'
+      );
+    }
+  }
+);
+
+// Delete group
+export const deleteGroup = createAsyncThunk(
+  'groups/deleteGroup',
+  async (groupId: string, { rejectWithValue }) => {
+    try {
+      await axiosInstance.delete(`/group/${groupId}`);
+      return groupId;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          'Failed to delete group'
+      );
+    }
+  }
+);

@@ -11,9 +11,11 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
 import authReducer from './slices/authSlice';
+import groupReducer from './slices/groupSlice';
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  groupCollection: groupReducer,
 });
 
 const persistConfig = {

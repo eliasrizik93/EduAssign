@@ -1,4 +1,11 @@
 import React, { useState } from 'react';
+import { Group } from '../GroupsCenter';
+import {
+  KeyboardArrowUp as KeyboardArrowUpIcon,
+  KeyboardArrowDown as KeyboardArrowDownIcon,
+  Share as ShareIcon,
+  Delete as DeleteIcon,
+} from '@mui/icons-material';
 import {
   TableRow,
   TableCell,
@@ -8,13 +15,7 @@ import {
   TableBody,
   Box,
 } from '@mui/material';
-import {
-  KeyboardArrowUp as KeyboardArrowUpIcon,
-  KeyboardArrowDown as KeyboardArrowDownIcon,
-  Share as ShareIcon,
-  Delete as DeleteIcon,
-} from '@mui/icons-material';
-import { Group } from '../GroupsCenter';
+import { useNavigate } from 'react-router-dom';
 
 type GroupProps = {
   group: Group;
@@ -33,7 +34,11 @@ const GroupRow: React.FC<GroupProps> = ({
   handleDeleteGroup,
 }) => {
   const [open, setOpen] = useState(false);
-
+  const navigate = useNavigate();
+  const handleGroup = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    navigate(`/groups/${group.id}`, { state: { group } });
+  };
   return (
     <>
       <TableRow
@@ -62,7 +67,9 @@ const GroupRow: React.FC<GroupProps> = ({
             )}
           </IconButton>
         </TableCell>
-        <TableCell align='left'>{group.name}</TableCell>
+        <TableCell align='left' onClick={handleGroup}>
+          {group.name}
+        </TableCell>
         <TableCell align='center' style={{ width: '300px' }}>
           {group.new}
         </TableCell>

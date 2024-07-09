@@ -1,10 +1,8 @@
 import {
-  IsDateString,
   IsNotEmpty,
   IsOptional,
   IsString,
   IsArray,
-  ArrayMinSize,
   ArrayUnique,
   IsEmail,
   IsNumber,

@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../CustomApi/axiosInstance';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import CreateGroupModal from './CreateGroupModal';
+import { useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
+import GroupRow from './GroupRow';
 import {
   TableContainer,
   Table,
@@ -10,13 +15,15 @@ import {
   Paper,
   Button,
 } from '@mui/material';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import CreateGroupModal from './CreateGroupModal';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import GroupRow from './GroupRow';
+import {
+  addGroup,
+  deleteGroup,
+  fetchGroups,
+} from '../../redux/thunks/groupThunks';
+import { useDispatch } from 'react-redux';
+import { Store } from 'redux';
 
-type CreateGroupDto = {
+export type CreateGroupDto = {
   name: string;
   userEmail: string;
   totalCards: number;
@@ -43,26 +50,20 @@ export type Group = {
 };
 
 const GroupsCenter: React.FC = () => {
-  const [tableData, setTableData] = useState<Group[]>([]);
+  const groups = useSelector(
+    (state: RootState) => state.groupCollection.groups
+  );
   const [open, setOpen] = useState(false);
   const userProfile = useSelector((state: RootState) => state.auth.userProfile);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    const getGroups = async () => {
-      try {
-        const response = await axiosInstance.get(
-          `/group/user/${userProfile?.email}`
-        );
-        const data = response.data;
-        setTableData(data);
-      } catch (error) {
-        console.error('Error fetching groups:', error);
-      }
-    };
-    getGroups();
-  }, [userProfile]);
+    if (userProfile?.email) {
+      dispatch(fetchGroups(userProfile.email));
+    }
+  }, [dispatch, userProfile]);
 
   const handleAddGroup = async (groupName: string) => {
     const newGroup: CreateGroupDto = {
@@ -77,10 +78,7 @@ const GroupsCenter: React.FC = () => {
     };
 
     try {
-      const response = await axiosInstance.post<Group>('/group', newGroup);
-      const createdGroup = response.data;
-
-      setTableData((prevData) => [...prevData, createdGroup]);
+      dispatch(addGroup(newGroup));
     } catch (error) {
       console.error('Error creating group:', error);
     }
@@ -90,9 +88,7 @@ const GroupsCenter: React.FC = () => {
 
   const handleDeleteGroup = async (groupId: string) => {
     try {
-      const response = await axiosInstance.delete(`/group/${groupId}`);
-      const data = response.data;
-      setTableData(data);
+      dispatch(deleteGroup(groupId));
     } catch (error) {
       console.error('Error deleting group:', error);
     }
@@ -130,7 +126,7 @@ const GroupsCenter: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {tableData.map((groupTemp) => (
+            {groups.map((groupTemp) => (
               <GroupRow
                 key={groupTemp.id}
                 group={groupTemp}

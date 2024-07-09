@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
 import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { Button } from '@mui/material';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -9,7 +10,7 @@ import './NavBar.scss'; // Import SCSS file
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/store';
 import { signOut } from '../../redux/thunks/authThunks';
-type IconType = 'home' | 'messages' | 'notifications';
+type IconType = 'home' | 'messages' | 'notifications' | 'groups';
 
 interface IconWrapperProps {
   name: IconType;
@@ -58,6 +59,7 @@ const NavBar: React.FC = () => {
     home: HomeOutlinedIcon,
     messages: MessageOutlinedIcon,
     notifications: NotificationsNoneIcon,
+    groups: DescriptionIcon,
   };
   const isAuthenticated = useSelector(
     (store: RootState) => store.auth.isAuthenticated

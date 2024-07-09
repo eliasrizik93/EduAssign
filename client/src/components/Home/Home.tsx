@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
-import GroupsCenter from '../GroupsCenter';
 
 const Home: React.FC = () => {
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -14,6 +13,6 @@ const Home: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  return <GroupsCenter />;
+  return <div>Home</div>;
 };
 export default Home;
