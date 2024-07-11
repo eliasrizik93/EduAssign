@@ -35,13 +35,22 @@ export class GroupService {
     return createGroup.save();
   }
 
-  findByUserEmail(userEmail: string): Promise<Group[]> {
+  private generatePopulation = (depth) => {
+    if (depth === 0) {
+      return undefined;
+    }
+
+    return {
+      path: 'children',
+      populate: this.generatePopulation(depth - 1),
+    };
+  };
+
+  async findByUserEmail(userEmail: string): Promise<Group[]> {
+    const depth = 10;
     return this.groupModel
       .find({ userEmail, parent: null })
-      .populate({
-        path: 'children',
-        populate: { path: 'children', populate: { path: 'children' } }, // Deep populate children
-      })
+      .populate(this.generatePopulation(depth))
       .exec();
   }
 
@@ -74,7 +83,6 @@ export class GroupService {
     const groupSource = await this.groupModel.findById(idSource).exec();
 
     if (idTarget === null) {
-      // Remove groupSource from its current parent, if it has one
       if (groupSource.parent) {
         const currentParent = await this.groupModel
           .findById(groupSource.parent)
@@ -87,13 +95,12 @@ export class GroupService {
         }
       }
       groupSource.parent = null;
-      groupSource.save();
+      await groupSource.save();
     } else {
       const groupTarget = await this.groupModel.findById(idTarget).exec();
       if (idSource === idTarget) {
-        return this.findByUserEmail(groupSource.userEmail); // Early return to avoid unnecessary processing
+        return await this.findByUserEmail(groupSource.userEmail);
       }
-      // Check if either source or target groups were not found
       if (!groupSource) {
         throw new NotFoundException(
           `Source group with id ${idSource} not found`,
@@ -105,12 +112,10 @@ export class GroupService {
         );
       }
 
-      // Prevent action if source is already in the target group
       if (groupSource.parent && groupSource.parent.equals(groupTarget._id)) {
-        return this.findByUserEmail(groupSource.userEmail); // Early return to avoid unnecessary processing
+        return await this.findByUserEmail(groupSource.userEmail);
       }
 
-      // Remove groupSource from its current parent, if it has one
       if (groupSource.parent) {
         const currentParent = await this.groupModel
           .findById(groupSource.parent)
@@ -123,21 +128,17 @@ export class GroupService {
         }
       }
 
-      // Set the new parent for groupSource
       groupSource.parent = groupTarget._id;
 
-      // Add groupSource to groupTarget's children array if not already included
       if (!groupTarget.children.includes(groupSource._id)) {
         groupTarget.children.push(groupSource._id);
       }
 
-      // Save the updated groupSource and groupTarget
       await groupSource.save();
       await groupTarget.save();
     }
 
-    // Return all groups with populated children and parent fields
-    return this.findByUserEmail(groupSource.userEmail);
+    return await this.findByUserEmail(groupSource.userEmail);
   }
 
   async remove(id: string): Promise<Group[]> {

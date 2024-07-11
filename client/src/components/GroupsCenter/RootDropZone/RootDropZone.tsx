@@ -16,18 +16,7 @@ const RootDropZone: React.FC<RootDropZoneProps> = ({ moveGroup, children }) => {
     },
   }));
 
-  return (
-    <div
-      ref={drop}
-      style={{
-        backgroundColor: '#ccc',
-        padding: '50px',
-        textAlign: 'center',
-      }}
-    >
-      {children}
-    </div>
-  );
+  return <div ref={drop}>{children}</div>;
 };
 
 export default RootDropZone;
