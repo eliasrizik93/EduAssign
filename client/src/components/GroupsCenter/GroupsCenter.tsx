@@ -20,7 +20,6 @@ import {
 } from '../../redux/thunks/groupThunks';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import CreateGroupModal from './CreateGroupModal';
-import _ from 'lodash';
 
 export type CreateGroupDto = {
   name: string;
@@ -93,17 +92,11 @@ const GroupsCenter: React.FC = () => {
     }
   };
 
-  const moveGroup = (dragIndex: number, hoverIndex: number) => {
-    dispatch(
-      moveGroups({
-        groupIdSource: groups[dragIndex].id.toString(),
-        groupIdTarget: groups[hoverIndex].id.toString(),
-      })
-    );
+  const moveGroup = (sourceId: string, targetId: string) => {
+    dispatch(moveGroups({ groupIdSource: sourceId, groupIdTarget: targetId }));
   };
-
   const findGroup = (id: string) => {
-    const group = groups.find((g) => g.id === id);
+    const group = groups.find((group) => group.id === id);
     return {
       group,
       index: group ? groups.indexOf(group) : -1,

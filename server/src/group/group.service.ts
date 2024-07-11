@@ -71,6 +71,7 @@ export class GroupService {
     const groupSource = await this.groupModel.findById(idSource).exec();
     const groupTarget = await this.groupModel.findById(idTarget).exec();
 
+    // Check if either source or target groups were not found
     if (!groupSource) {
       throw new NotFoundException(`Source group with id ${idSource} not found`);
     }
@@ -78,7 +79,12 @@ export class GroupService {
       throw new NotFoundException(`Target group with id ${idTarget} not found`);
     }
 
-    // Remove groupSource from its current parent's children array if it has a parent
+    // Prevent action if source is already in the target group
+    if (groupSource.parent && groupSource.parent.equals(groupTarget._id)) {
+      return this.findByUserEmail(groupSource.userEmail); // Early return to avoid unnecessary processing
+    }
+
+    // Remove groupSource from its current parent, if it has one
     if (groupSource.parent) {
       const currentParent = await this.groupModel
         .findById(groupSource.parent)
@@ -94,7 +100,7 @@ export class GroupService {
     // Set the new parent for groupSource
     groupSource.parent = groupTarget._id;
 
-    // Add groupSource to groupTarget's children array
+    // Add groupSource to groupTarget's children array if not already included
     if (!groupTarget.children.includes(groupSource._id)) {
       groupTarget.children.push(groupSource._id);
     }

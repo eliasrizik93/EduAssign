@@ -16,12 +16,7 @@ import {
   Box,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import {
-  useDrag,
-  useDrop,
-  DragSourceMonitor,
-  DropTargetMonitor,
-} from 'react-dnd';
+import { useDrag, useDrop } from 'react-dnd';
 import { Group } from '../GroupsCenter';
 
 type DragItem = {
@@ -32,7 +27,7 @@ type GroupProps = {
   group: Group;
   level: number;
   handleDeleteGroup: (id: string) => void;
-  moveGroup: (dragIndex: number, hoverIndex: number) => void;
+  moveGroup: (sourceId: string, targetId: string) => void; // Make sure it expects strings
   findGroup: (id: string) => { index: number };
 };
 
@@ -55,32 +50,27 @@ const GroupRow: React.FC<GroupProps> = ({
     navigate(`/groups/${group.id}`, { state: { group } });
   };
 
-  const { index: originalIndex } = findGroup(group.id);
-
   const [{ isDragging }, drag, preview] = useDrag(
     () => ({
       type: 'row',
-      item: { id: group.id, originalIndex },
+      item: { id: group.id },
       collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
     }),
-    [group.id, originalIndex, moveGroup, findGroup]
+    [group.id]
   );
 
   const [, drop] = useDrop(
     () => ({
       accept: 'row',
-      drop: (item: DragItem, monitor: DropTargetMonitor) => {
+      drop: (item: DragItem) => {
         if (item.id !== group.id) {
-          const { index: overIndex } = findGroup(group.id);
-
-          moveGroup(item.originalIndex, overIndex);
-          item.originalIndex = overIndex;
+          moveGroup(item.id, group.id);
         }
       },
     }),
-    [group.id, moveGroup, findGroup]
+    [group.id, moveGroup]
   );
 
   return (
