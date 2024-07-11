@@ -67,13 +67,15 @@ export const moveGroups = createAsyncThunk(
     {
       groupIdSource,
       groupIdTarget,
-    }: { groupIdSource: string; groupIdTarget: string },
+    }: { groupIdSource: string; groupIdTarget: string | null },
     { rejectWithValue }
   ) => {
     try {
-      const response = await axiosInstance.put<Group[]>(
-        `/group/${groupIdSource}/${groupIdTarget}`
-      );
+      const url =
+        groupIdTarget !== null
+          ? `/group/${groupIdSource}/${groupIdTarget}`
+          : `/group/${groupIdSource}/`;
+      const response = await axiosInstance.put<Group[]>(url);
       return response.data;
     } catch (error: any) {
       return rejectWithValue(

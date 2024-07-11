@@ -27,7 +27,7 @@ type GroupProps = {
   group: Group;
   level: number;
   handleDeleteGroup: (id: string) => void;
-  moveGroup: (sourceId: string, targetId: string) => void; // Make sure it expects strings
+  moveGroup: (sourceId: string, targetId: string) => void;
   findGroup: (id: string) => { index: number };
 };
 

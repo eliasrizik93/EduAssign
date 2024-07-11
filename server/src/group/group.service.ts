@@ -70,7 +70,9 @@ export class GroupService {
   async updatePosition(idSource: string, idTarget: string): Promise<Group[]> {
     const groupSource = await this.groupModel.findById(idSource).exec();
     const groupTarget = await this.groupModel.findById(idTarget).exec();
-
+    if (idSource === idTarget) {
+      return this.findByUserEmail(groupSource.userEmail); // Early return to avoid unnecessary processing
+    }
     // Check if either source or target groups were not found
     if (!groupSource) {
       throw new NotFoundException(`Source group with id ${idSource} not found`);

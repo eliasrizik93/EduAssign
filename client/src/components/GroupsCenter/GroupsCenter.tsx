@@ -20,6 +20,8 @@ import {
 } from '../../redux/thunks/groupThunks';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import CreateGroupModal from './CreateGroupModal';
+import { useDrop } from 'react-dnd';
+import { DragItem } from './GroupRow/GroupRow';
 
 export type CreateGroupDto = {
   name: string;
@@ -93,7 +95,20 @@ const GroupsCenter: React.FC = () => {
   };
 
   const moveGroup = (sourceId: string, targetId: string) => {
-    dispatch(moveGroups({ groupIdSource: sourceId, groupIdTarget: targetId }));
+    if (sourceId === targetId) return;
+    const sourceGroup = groups.find((group) => group.id === sourceId);
+    const targetGroup = targetId
+      ? groups.find((group) => group.id === targetId)
+      : null;
+    if (targetGroup && sourceGroup?.id === targetGroup.parent) {
+      return;
+    }
+    dispatch(
+      moveGroups({
+        groupIdSource: sourceId,
+        groupIdTarget: targetId,
+      })
+    );
   };
   const findGroup = (id: string) => {
     const group = groups.find((group) => group.id === id);
@@ -136,16 +151,17 @@ const GroupsCenter: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {groups.map((groupTemp, index) => (
-              <GroupRow
-                key={groupTemp.id}
-                group={groupTemp}
-                level={0}
-                handleDeleteGroup={handleDeleteGroup}
-                moveGroup={moveGroup}
-                findGroup={findGroup}
-              />
-            ))}
+            {groups?.length > 0 &&
+              groups.map((groupTemp) => (
+                <GroupRow
+                  key={groupTemp.id}
+                  group={groupTemp}
+                  level={0}
+                  handleDeleteGroup={handleDeleteGroup}
+                  moveGroup={moveGroup}
+                  findGroup={findGroup}
+                />
+              ))}
           </TableBody>
         </Table>
       </TableContainer>
