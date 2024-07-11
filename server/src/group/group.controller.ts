@@ -6,13 +6,16 @@ import {
   Param,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { CreateGroupDto } from './dto/create-group.dto';
 import { UpdateGroupDto } from './dto/update-group.dto';
 import { Group } from './schemas/group.schema';
+import { JwtAuthGuard } from 'src/user/guards/jwt-auth.guard';
 
 @Controller('group')
+@UseGuards(JwtAuthGuard)
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
@@ -32,6 +35,14 @@ export class GroupController {
     @Body() updateGroupDto: UpdateGroupDto,
   ): Promise<Group> {
     return this.groupService.update(id, updateGroupDto);
+  }
+
+  @Put(':sourceId/:targetId')
+  async updateGroupPosition(
+    @Param('sourceId') sourceId: string,
+    @Param('targetId') targetId: string,
+  ): Promise<Group[]> {
+    return this.groupService.updatePosition(sourceId, targetId);
   }
 
   @Delete(':id')

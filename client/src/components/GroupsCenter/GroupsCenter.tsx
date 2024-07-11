@@ -1,27 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import axiosInstance from '../../CustomApi/axiosInstance';
-import AddBoxIcon from '@mui/icons-material/AddBox';
-import CreateGroupModal from './CreateGroupModal';
-import { useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../../redux/store';
-import GroupRow from './GroupRow';
+import React, { useEffect, useState } from 'react';
 import {
   TableContainer,
+  Paper,
   Table,
   TableHead,
   TableRow,
   TableCell,
   TableBody,
-  Paper,
   Button,
 } from '@mui/material';
+import GroupRow from './GroupRow';
+import { useSelector, useDispatch } from 'react-redux';
+import { AppDispatch, RootState } from '../../redux/store';
 import {
   addGroup,
   deleteGroup,
   fetchGroups,
+  moveGroups,
 } from '../../redux/thunks/groupThunks';
-import { useDispatch } from 'react-redux';
-import { Store } from 'redux';
+import AddBoxIcon from '@mui/icons-material/AddBox';
+import CreateGroupModal from './CreateGroupModal';
+import _ from 'lodash';
 
 export type CreateGroupDto = {
   name: string;
@@ -94,6 +93,23 @@ const GroupsCenter: React.FC = () => {
     }
   };
 
+  const moveGroup = (dragIndex: number, hoverIndex: number) => {
+    dispatch(
+      moveGroups({
+        groupIdSource: groups[dragIndex].id.toString(),
+        groupIdTarget: groups[hoverIndex].id.toString(),
+      })
+    );
+  };
+
+  const findGroup = (id: string) => {
+    const group = groups.find((g) => g.id === id);
+    return {
+      group,
+      index: group ? groups.indexOf(group) : -1,
+    };
+  };
+
   return (
     <>
       <Button
@@ -112,10 +128,11 @@ const GroupsCenter: React.FC = () => {
         handleAddGroup={handleAddGroup}
       />
 
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ padding: '100px' }}>
         <Table aria-label='collapsible table'>
           <TableHead>
             <TableRow>
+              <TableCell />
               <TableCell />
               <TableCell>Name</TableCell>
               <TableCell align='center'>New</TableCell>
@@ -126,12 +143,14 @@ const GroupsCenter: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {groups.map((groupTemp) => (
+            {groups.map((groupTemp, index) => (
               <GroupRow
                 key={groupTemp.id}
                 group={groupTemp}
                 level={0}
                 handleDeleteGroup={handleDeleteGroup}
+                moveGroup={moveGroup}
+                findGroup={findGroup}
               />
             ))}
           </TableBody>

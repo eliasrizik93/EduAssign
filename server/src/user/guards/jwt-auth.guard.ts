@@ -9,7 +9,7 @@ import { Request } from 'express';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  private blacklistedTokens: Set<string> = new Set(); // Example blacklist storage
+  private blacklistedTokens: Set<string> = new Set();
 
   constructor(private readonly jwtService: JwtService) {}
 

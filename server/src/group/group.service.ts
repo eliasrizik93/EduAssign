@@ -37,9 +37,11 @@ export class GroupService {
 
   findByUserEmail(userEmail: string): Promise<Group[]> {
     return this.groupModel
-      .find({ userEmail })
-      .populate('cards')
-      .populate('children')
+      .find({ userEmail, parent: null })
+      .populate({
+        path: 'children',
+        populate: { path: 'children', populate: { path: 'children' } }, // Deep populate children
+      })
       .exec();
   }
 
@@ -65,6 +67,46 @@ export class GroupService {
     return updatedGroup;
   }
 
+  async updatePosition(idSource: string, idTarget: string): Promise<Group[]> {
+    const groupSource = await this.groupModel.findById(idSource).exec();
+    const groupTarget = await this.groupModel.findById(idTarget).exec();
+
+    if (!groupSource) {
+      throw new NotFoundException(`Source group with id ${idSource} not found`);
+    }
+    if (!groupTarget) {
+      throw new NotFoundException(`Target group with id ${idTarget} not found`);
+    }
+
+    // Remove groupSource from its current parent's children array if it has a parent
+    if (groupSource.parent) {
+      const currentParent = await this.groupModel
+        .findById(groupSource.parent)
+        .exec();
+      if (currentParent) {
+        currentParent.children = currentParent.children.filter(
+          (childId) => !childId.equals(groupSource._id),
+        );
+        await currentParent.save();
+      }
+    }
+
+    // Set the new parent for groupSource
+    groupSource.parent = groupTarget._id;
+
+    // Add groupSource to groupTarget's children array
+    if (!groupTarget.children.includes(groupSource._id)) {
+      groupTarget.children.push(groupSource._id);
+    }
+
+    // Save the updated groupSource and groupTarget
+    await groupSource.save();
+    await groupTarget.save();
+
+    // Return all groups with populated children and parent fields
+    return this.findByUserEmail(groupSource.userEmail);
+  }
+
   async remove(id: string): Promise<Group[]> {
     const group = await this.groupModel.findById(id).exec();
     if (!group) {
@@ -79,90 +121,18 @@ export class GroupService {
       await this.remove(childGroup._id.toString());
     }
 
+    if (group.parent) {
+      const parentGroup = await this.groupModel.findById(group.parent).exec();
+      if (parentGroup) {
+        parentGroup.children = parentGroup.children.filter(
+          (childId) => !childId.equals(group._id), // Filter out the group ID from the parent's children array
+        );
+        await parentGroup.save();
+      }
+    }
+
     // Delete the group itself
     await this.groupModel.deleteOne({ _id: group._id }).exec();
     return this.findByUserEmail(group.userEmail);
-  }
-
-  async moveGroupToParent(
-    groupId: string,
-    parentId: string | null,
-  ): Promise<void> {
-    const group = await this.groupModel.findById(groupId).exec();
-    if (!group) {
-      throw new NotFoundException(`Group with ID ${groupId} not found`);
-    }
-
-    if (parentId) {
-      const parentGroup = await this.groupModel.findById(parentId).exec();
-      if (!parentGroup) {
-        throw new NotFoundException(
-          `Parent Group with ID ${parentId} not found`,
-        );
-      }
-
-      // Update the parent of the group
-      group.parent = parentGroup._id;
-      await group.save();
-
-      // Add the group to the parent's children
-      parentGroup.children.push(group._id);
-      await parentGroup.save();
-    } else {
-      // Remove the group from its current parent's children array
-      if (group.parent) {
-        const currentParentGroup = await this.groupModel
-          .findById(group.parent)
-          .exec();
-        if (currentParentGroup) {
-          currentParentGroup.children = currentParentGroup.children.filter(
-            (childId) => !childId.equals(group._id),
-          );
-          await currentParentGroup.save();
-        }
-      }
-
-      // Set the group's parent to null (make it a top-level group)
-      group.parent = null;
-      await group.save();
-    }
-  }
-
-  async moveGroupToAnotherChild(
-    groupId: string,
-    newParentId: string,
-  ): Promise<void> {
-    const group = await this.groupModel.findById(groupId).exec();
-    const newParentGroup = await this.groupModel.findById(newParentId).exec();
-
-    if (!group) {
-      throw new NotFoundException(`Group with ID ${groupId} not found`);
-    }
-    if (!newParentGroup) {
-      throw new NotFoundException(
-        `Parent Group with ID ${newParentId} not found`,
-      );
-    }
-
-    // Remove the group from its current parent's children array
-    if (group.parent) {
-      const currentParentGroup = await this.groupModel
-        .findById(group.parent)
-        .exec();
-      if (currentParentGroup) {
-        currentParentGroup.children = currentParentGroup.children.filter(
-          (childId) => !childId.equals(group._id),
-        );
-        await currentParentGroup.save();
-      }
-    }
-
-    // Update the parent of the group to the new parent
-    group.parent = newParentGroup._id;
-    await group.save();
-
-    // Add the group to the new parent's children array
-    newParentGroup.children.push(group._id);
-    await newParentGroup.save();
   }
 }

@@ -49,13 +49,37 @@ export const deleteGroup = createAsyncThunk(
   'groups/deleteGroup',
   async (groupId: string, { rejectWithValue }) => {
     try {
-      await axiosInstance.delete(`/group/${groupId}`);
-      return groupId;
+      const response = await axiosInstance.delete(`/group/${groupId}`);
+      return response.data; // Return the updated list of groups
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message ||
           error.message ||
           'Failed to delete group'
+      );
+    }
+  }
+);
+
+export const moveGroups = createAsyncThunk(
+  'groups/moveGroups',
+  async (
+    {
+      groupIdSource,
+      groupIdTarget,
+    }: { groupIdSource: string; groupIdTarget: string },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.put<Group[]>(
+        `/group/${groupIdSource}/${groupIdTarget}`
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          'Failed to update groups'
       );
     }
   }

@@ -1,5 +1,10 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { addGroup, deleteGroup, fetchGroups } from '../thunks/groupThunks';
+import {
+  addGroup,
+  deleteGroup,
+  fetchGroups,
+  moveGroups,
+} from '../thunks/groupThunks';
 
 export interface Group {
   id: string;
@@ -55,16 +60,32 @@ const groupSlice = createSlice({
       .addCase(addGroup.rejected, (state, action) => {
         state.error = action.error.message || 'Failed to add group';
       })
+      .addCase(deleteGroup.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(
         deleteGroup.fulfilled,
-        (state, action: PayloadAction<string>) => {
-          state.groups = state.groups.filter(
-            (group) => group.id !== action.payload
-          );
+        (state, action: PayloadAction<Group[]>) => {
+          state.loading = false;
+          state.groups = action.payload;
         }
       )
       .addCase(deleteGroup.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.error.message || 'Failed to delete group';
+      })
+      .addCase(moveGroups.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(moveGroups.fulfilled, (state, action) => {
+        state.loading = false;
+        state.groups = action.payload;
+      })
+      .addCase(moveGroups.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   },
 });
