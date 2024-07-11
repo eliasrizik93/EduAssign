@@ -20,8 +20,6 @@ import {
 } from '../../redux/thunks/groupThunks';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import CreateGroupModal from './CreateGroupModal';
-import { useDrop } from 'react-dnd';
-import { DragItem } from './GroupRow/GroupRow';
 
 export type CreateGroupDto = {
   name: string;
