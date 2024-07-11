@@ -67,49 +67,74 @@ export class GroupService {
     return updatedGroup;
   }
 
-  async updatePosition(idSource: string, idTarget: string): Promise<Group[]> {
+  async updatePosition(
+    idSource: string,
+    idTarget: string | null,
+  ): Promise<Group[]> {
     const groupSource = await this.groupModel.findById(idSource).exec();
-    const groupTarget = await this.groupModel.findById(idTarget).exec();
-    if (idSource === idTarget) {
-      return this.findByUserEmail(groupSource.userEmail); // Early return to avoid unnecessary processing
-    }
-    // Check if either source or target groups were not found
-    if (!groupSource) {
-      throw new NotFoundException(`Source group with id ${idSource} not found`);
-    }
-    if (!groupTarget) {
-      throw new NotFoundException(`Target group with id ${idTarget} not found`);
-    }
 
-    // Prevent action if source is already in the target group
-    if (groupSource.parent && groupSource.parent.equals(groupTarget._id)) {
-      return this.findByUserEmail(groupSource.userEmail); // Early return to avoid unnecessary processing
-    }
-
-    // Remove groupSource from its current parent, if it has one
-    if (groupSource.parent) {
-      const currentParent = await this.groupModel
-        .findById(groupSource.parent)
-        .exec();
-      if (currentParent) {
-        currentParent.children = currentParent.children.filter(
-          (childId) => !childId.equals(groupSource._id),
-        );
-        await currentParent.save();
+    if (idTarget === null) {
+      // Remove groupSource from its current parent, if it has one
+      if (groupSource.parent) {
+        const currentParent = await this.groupModel
+          .findById(groupSource.parent)
+          .exec();
+        if (currentParent) {
+          currentParent.children = currentParent.children.filter(
+            (childId) => !childId.equals(groupSource._id),
+          );
+          await currentParent.save();
+        }
       }
+      groupSource.parent = null;
+      groupSource.save();
+    } else {
+      const groupTarget = await this.groupModel.findById(idTarget).exec();
+      if (idSource === idTarget) {
+        return this.findByUserEmail(groupSource.userEmail); // Early return to avoid unnecessary processing
+      }
+      // Check if either source or target groups were not found
+      if (!groupSource) {
+        throw new NotFoundException(
+          `Source group with id ${idSource} not found`,
+        );
+      }
+      if (!groupTarget) {
+        throw new NotFoundException(
+          `Target group with id ${idTarget} not found`,
+        );
+      }
+
+      // Prevent action if source is already in the target group
+      if (groupSource.parent && groupSource.parent.equals(groupTarget._id)) {
+        return this.findByUserEmail(groupSource.userEmail); // Early return to avoid unnecessary processing
+      }
+
+      // Remove groupSource from its current parent, if it has one
+      if (groupSource.parent) {
+        const currentParent = await this.groupModel
+          .findById(groupSource.parent)
+          .exec();
+        if (currentParent) {
+          currentParent.children = currentParent.children.filter(
+            (childId) => !childId.equals(groupSource._id),
+          );
+          await currentParent.save();
+        }
+      }
+
+      // Set the new parent for groupSource
+      groupSource.parent = groupTarget._id;
+
+      // Add groupSource to groupTarget's children array if not already included
+      if (!groupTarget.children.includes(groupSource._id)) {
+        groupTarget.children.push(groupSource._id);
+      }
+
+      // Save the updated groupSource and groupTarget
+      await groupSource.save();
+      await groupTarget.save();
     }
-
-    // Set the new parent for groupSource
-    groupSource.parent = groupTarget._id;
-
-    // Add groupSource to groupTarget's children array if not already included
-    if (!groupTarget.children.includes(groupSource._id)) {
-      groupTarget.children.push(groupSource._id);
-    }
-
-    // Save the updated groupSource and groupTarget
-    await groupSource.save();
-    await groupTarget.save();
 
     // Return all groups with populated children and parent fields
     return this.findByUserEmail(groupSource.userEmail);

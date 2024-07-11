@@ -73,11 +73,12 @@ export const moveGroups = createAsyncThunk(
     try {
       const url =
         groupIdTarget !== null
-          ? `/group/${groupIdSource}/${groupIdTarget}`
-          : `/group/${groupIdSource}/`;
+          ? `/group/move/${groupIdSource}/${groupIdTarget}`
+          : `/group/move-to-root/${groupIdSource}`;
       const response = await axiosInstance.put<Group[]>(url);
       return response.data;
     } catch (error: any) {
+      console.error('Error during group move:', error);
       return rejectWithValue(
         error.response?.data?.message ||
           error.message ||

@@ -37,12 +37,19 @@ export class GroupController {
     return this.groupService.update(id, updateGroupDto);
   }
 
-  @Put(':sourceId/:targetId')
+  @Put('move/:sourceId/:targetId')
   async updateGroupPosition(
     @Param('sourceId') sourceId: string,
     @Param('targetId') targetId: string,
   ): Promise<Group[]> {
     return this.groupService.updatePosition(sourceId, targetId);
+  }
+
+  @Put('move-to-root/:sourceId')
+  async updateGroupToRoot(
+    @Param('sourceId') sourceId: string,
+  ): Promise<Group[]> {
+    return this.groupService.updatePosition(sourceId, null);
   }
 
   @Delete(':id')

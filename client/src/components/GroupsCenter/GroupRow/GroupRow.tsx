@@ -19,7 +19,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd';
 import { Group } from '../GroupsCenter';
 
-type DragItem = {
+export type DragItem = {
   id: string;
   originalIndex: number;
 };

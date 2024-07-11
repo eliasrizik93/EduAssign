@@ -20,6 +20,7 @@ import {
 } from '../../redux/thunks/groupThunks';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import CreateGroupModal from './CreateGroupModal';
+import RootDropZone from './RootDropZone/RootDropZone';
 
 export type CreateGroupDto = {
   name: string;
@@ -92,9 +93,34 @@ const GroupsCenter: React.FC = () => {
     }
   };
 
-  const moveGroup = (sourceId: string, targetId: string) => {
+  const findGroupRecursively = (
+    groups: Group[] | undefined,
+    groupId: string
+  ): Group | null => {
+    // Safely handle cases where groups might be undefined or not an array
+    if (!Array.isArray(groups) || groups.length === 0) {
+      return null;
+    }
+
+    for (const group of groups) {
+      if (group.id === groupId) {
+        return group;
+      }
+
+      if (group.children && group.children.length > 0) {
+        const found = findGroupRecursively(group.children, groupId);
+        if (found) {
+          return found;
+        }
+      }
+    }
+
+    return null;
+  };
+
+  const moveGroup = (sourceId: string, targetId: string | null) => {
     if (sourceId === targetId) return;
-    const sourceGroup = groups.find((group) => group.id === sourceId);
+    const sourceGroup = findGroupRecursively(groups, sourceId);
     const targetGroup = targetId
       ? groups.find((group) => group.id === targetId)
       : null;
@@ -133,36 +159,37 @@ const GroupsCenter: React.FC = () => {
         handleClose={handleClose}
         handleAddGroup={handleAddGroup}
       />
-
-      <TableContainer component={Paper} sx={{ padding: '100px' }}>
-        <Table aria-label='collapsible table'>
-          <TableHead>
-            <TableRow>
-              <TableCell />
-              <TableCell />
-              <TableCell>Name</TableCell>
-              <TableCell align='center'>New</TableCell>
-              <TableCell align='center'>In Progress</TableCell>
-              <TableCell align='center'>Restudy</TableCell>
-              <TableCell align='center'>Share</TableCell>
-              <TableCell align='center'>Delete</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {groups?.length > 0 &&
-              groups.map((groupTemp) => (
-                <GroupRow
-                  key={groupTemp.id}
-                  group={groupTemp}
-                  level={0}
-                  handleDeleteGroup={handleDeleteGroup}
-                  moveGroup={moveGroup}
-                  findGroup={findGroup}
-                />
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <RootDropZone moveGroup={moveGroup}>
+        <TableContainer component={Paper} sx={{ padding: '100px' }}>
+          <Table aria-label='collapsible table'>
+            <TableHead>
+              <TableRow>
+                <TableCell />
+                <TableCell />
+                <TableCell>Name</TableCell>
+                <TableCell align='center'>New</TableCell>
+                <TableCell align='center'>In Progress</TableCell>
+                <TableCell align='center'>Restudy</TableCell>
+                <TableCell align='center'>Share</TableCell>
+                <TableCell align='center'>Delete</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {groups?.length > 0 &&
+                groups.map((groupTemp) => (
+                  <GroupRow
+                    key={groupTemp.id}
+                    group={groupTemp}
+                    level={0}
+                    handleDeleteGroup={handleDeleteGroup}
+                    moveGroup={moveGroup}
+                    findGroup={findGroup}
+                  />
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </RootDropZone>
     </>
   );
 };
