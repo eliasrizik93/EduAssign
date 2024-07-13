@@ -108,7 +108,17 @@ const GroupRow: React.FC<GroupProps> = ({
             )}
           </IconButton>
         </TableCell>
-        <TableCell align='left' onClick={handleGroup}>
+        <TableCell
+          align='left'
+          onClick={handleGroup}
+          sx={{
+            cursor: 'pointer',
+            '&:hover': {
+              color: 'blue',
+              textDecoration: 'underline',
+            },
+          }}
+        >
           {group.name}
         </TableCell>
         <TableCell align='center' style={{ width: '300px' }}>

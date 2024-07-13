@@ -8,15 +8,11 @@ import {
 export class CreateCardDto {
   @IsNotEmpty()
   @IsString()
-  readonly id: string;
+  readonly question: string;
 
   @IsNotEmpty()
   @IsString()
-  readonly question: any;
-
-  @IsNotEmpty()
-  @IsString()
-  readonly answer: any;
+  readonly answer: string;
 
   @IsNotEmpty()
   @IsString()

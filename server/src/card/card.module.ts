@@ -5,10 +5,12 @@ import { CardController } from './card.controller';
 import { CardSchema } from './schemas/card.schema';
 
 import { UserModule } from 'src/user/user.module';
+import { Group, GroupSchema } from 'src/group/schemas/group.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Card', schema: CardSchema }]),
+    MongooseModule.forFeature([{ name: Group.name, schema: GroupSchema }]),
     UserModule,
   ],
   controllers: [CardController],

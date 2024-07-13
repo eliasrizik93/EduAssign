@@ -1,27 +1,29 @@
-.container-test {
+.card-modal-container {
   display: flex;
   flex-direction: column;
   height: 70%;
   align-items: center;
   justify-content: center;
-  margin-top: 50px;
-  .card-container {
+
+  .editor-container {
     display: flex;
     height: 100%;
     width: 100%;
-    .question,
-    .answer {
+
+    .editor {
       width: 100%;
       margin-right: 50px;
       margin-left: 50px;
+      text-align: center;
     }
 
-    .react-quill-style {
+    .quill-editor {
       width: 100%;
       height: 80%;
     }
   }
-  .button-container {
+
+  .action-container {
     width: 100%;
     display: flex;
     align-items: center;

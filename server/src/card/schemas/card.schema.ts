@@ -3,7 +3,7 @@ import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 
 @Schema()
 export class Card extends Document {
-  @Prop({ required: true, unique: true })
+  @Prop({ required: true, unique: true, default: () => new Types.ObjectId() })
   id: string;
 
   @Prop({ required: true, type: MongooseSchema.Types.Mixed })
@@ -13,7 +13,10 @@ export class Card extends Document {
   answer: string | Buffer;
 
   @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Group', required: true })
-  group: Types.ObjectId;
+  groupId: Types.ObjectId;
+
+  @Prop({ default: 'new' })
+  state: 'new' | 'inProgress' | 'restudy';
 
   @Prop({ default: Date.now })
   createdAt: Date;
