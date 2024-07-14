@@ -2,18 +2,18 @@ import React, { useEffect, useState } from 'react';
 import './WhoGoingToBeMillionaire.scss';
 import { Button } from 'react-bootstrap';
 
-interface Option {
+type Option = {
   id: number;
   answer: string;
   classes: string;
-}
+};
 
-interface QuizItem {
+type QuizItem = {
   id: number;
   word: string;
   options: Option[];
   correctAnswer: string;
-}
+};
 
 const initialItems: QuizItem[] = [
   {

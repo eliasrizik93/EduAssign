@@ -12,12 +12,12 @@ import { AppDispatch, RootState } from '../../redux/store';
 import { signOut } from '../../redux/thunks/authThunks';
 type IconType = 'home' | 'messages' | 'notifications' | 'groups';
 
-interface IconWrapperProps {
+type IconWrapperProps = {
   name: IconType;
   Icon: typeof HomeOutlinedIcon;
   clickedIcon: IconType | null;
   setClickedIcon: React.Dispatch<React.SetStateAction<IconType | null>>;
-}
+};
 
 const IconWrapper: React.FC<IconWrapperProps> = ({
   name,

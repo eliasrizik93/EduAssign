@@ -12,11 +12,11 @@ const style = {
   p: 4,
 };
 
-interface CreateGroupProps {
+type CreateGroupProps = {
   open: boolean;
   handleClose: () => void;
   handleAddGroup: (groupName: string) => void;
-}
+};
 
 const CreateGroup: React.FC<CreateGroupProps> = ({
   open,

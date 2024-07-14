@@ -12,11 +12,11 @@ const quillModules = {
   // Define your Quill modules here
 };
 
-interface CreateCardModalProps {
+type CreateCardModalProps = {
   open: boolean;
   group: Group;
   handleClose: () => void;
-}
+};
 
 const CreateCardModal: React.FC<CreateCardModalProps> = ({
   open,

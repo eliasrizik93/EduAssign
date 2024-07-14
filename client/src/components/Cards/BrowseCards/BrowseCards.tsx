@@ -26,6 +26,7 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
   group,
 }) => {
   const [cardsList, setCardsList] = useState<Card[]>([]);
+  const [choosenCard, setChoosenCard] = useState<Card | null>(null);
 
   useEffect(() => {
     const fetchCards = async () => {
@@ -103,7 +104,10 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
                   boxShadow: 3,
                 }}
               >
-                <CardsList cardsList={cardsList} />
+                <CardsList
+                  cardsList={cardsList}
+                  handleChooseCard={setChoosenCard}
+                />
               </Box>
               <Box
                 sx={{
@@ -112,7 +116,7 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
                   boxShadow: 3,
                 }}
               >
-                <EditCards />
+                <EditCards card={choosenCard} />
               </Box>
             </Box>
           </div>

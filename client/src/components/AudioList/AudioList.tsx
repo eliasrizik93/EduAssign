@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import PlayCircleOutlineIcon from '@mui/icons-material/PlayCircleOutline';
 import './AudioList.scss';
 import axiosInstance from '../../CustomApi/axiosInstance';
-interface Card {
+type Card = {
   _id: string;
   text: string;
-}
+};
 
 const AudioList: React.FC = () => {
   const [cards, setCards] = useState<Card[]>([]);

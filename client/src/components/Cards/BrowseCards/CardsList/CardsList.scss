@@ -1,0 +1,23 @@
+.cards-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cards-table th,
+.cards-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.cards-table th {
+  background-color: #f2f2f2;
+}
+
+.card-row {
+  cursor: pointer;
+}
+
+.card-row:hover {
+  background-color: #f1f1f1;
+}

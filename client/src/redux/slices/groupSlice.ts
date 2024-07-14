@@ -6,7 +6,7 @@ import {
   moveGroups,
 } from '../thunks/groupThunks';
 
-export interface Group {
+export type Group = {
   id: string;
   name: string;
   userEmail: string;
@@ -19,13 +19,13 @@ export interface Group {
   cards: string[];
   createdAt: string;
   updatedAt: string;
-}
+};
 
-export interface GroupState {
+export type GroupState = {
   groups: Group[];
   loading: boolean;
   error: string | null;
-}
+};
 
 const initialState: GroupState = {
   groups: [],

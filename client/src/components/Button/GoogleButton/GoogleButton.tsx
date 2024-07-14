@@ -4,9 +4,9 @@ import './GoogleButton.scss';
 import { Button } from 'react-bootstrap';
 import GoogleIcon from '@mui/icons-material/Google';
 
-interface GoogleButtonProps {
+type GoogleButtonProps = {
   onClick: () => void;
-}
+};
 
 const GoogleButton: React.FC<GoogleButtonProps> = ({ onClick }) => {
   return (

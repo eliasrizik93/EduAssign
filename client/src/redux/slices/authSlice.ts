@@ -1,20 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface UserProfile {
+type UserProfile = {
   email: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
   birthday: string;
   gender: string;
-}
+};
 
-interface AuthState {
+type AuthState = {
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
   userProfile: UserProfile | null;
-}
+};
 
 const initialState: AuthState = {
   isAuthenticated: false,

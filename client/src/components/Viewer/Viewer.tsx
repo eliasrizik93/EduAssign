@@ -1,8 +1,8 @@
 import ReactMarkdown from 'react-markdown';
 
-export interface ViewerProps {
+export type ViewerProps = {
   value: string;
-}
+};
 
 export default function Viewer(props: ViewerProps) {
   return <ReactMarkdown>{props.value}</ReactMarkdown>;
