@@ -26,6 +26,8 @@ export class CardService {
       }
 
       group.cards.push(createCard._id);
+      group.totalCards += 1;
+      group.new += 1;
       await group.save();
 
       return createCard;
@@ -43,12 +45,26 @@ export class CardService {
   }
 
   async update(id: string, updateCardDto: UpdateCardDto) {
-    const updatedCard = await this.cardModel
-      .findByIdAndUpdate(id, updateCardDto, { new: true })
-      .exec();
-    if (!updatedCard) {
+    console.log('Updating card with ID:', id);
+
+    if (!id) {
+      throw new Error('No ID provided');
+    }
+
+    // Mongoose's findById method automatically handles converting string IDs to ObjectId, and throws if invalid
+    const card = await this.cardModel.findById(id).exec();
+    if (!card) {
       throw new NotFoundException(`Card with ID ${id} not found`);
     }
+
+    // Using the $set operator to ensure only provided fields are updated
+    const updatedCard = await this.cardModel
+      .findByIdAndUpdate(id, { $set: updateCardDto }, { new: true })
+      .exec();
+    if (!updatedCard) {
+      throw new NotFoundException(`Failed to update card with ID ${id}`);
+    }
+
     return updatedCard;
   }
 
@@ -61,6 +77,7 @@ export class CardService {
     const group = await this.groupModel.findById(result.groupId).exec();
     if (group) {
       group.cards = group.cards.filter((cardId) => !cardId.equals(result._id));
+      group.totalCards--;
       await group.save();
     }
   }

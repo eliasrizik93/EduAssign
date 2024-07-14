@@ -3,9 +3,6 @@ import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 
 @Schema()
 export class Card extends Document {
-  @Prop({ required: true, unique: true, default: () => new Types.ObjectId() })
-  id: string;
-
   @Prop({ required: true, type: MongooseSchema.Types.Mixed })
   question: string | Buffer;
 

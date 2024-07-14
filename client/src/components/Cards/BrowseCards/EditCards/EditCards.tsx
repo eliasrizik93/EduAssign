@@ -34,7 +34,10 @@ const EditCards: React.FC<EditCardsProps> = ({ card }) => {
 
   const handleSave = async () => {
     try {
-      await axiosInstance.put(`/card/${editedCard.id}`, editedCard);
+      await axiosInstance.put(`/card/${editedCard._id}`, {
+        question: editedCard.question,
+        answer: editedCard.answer,
+      });
       console.log('Card updated successfully', editedCard);
     } catch (error) {
       console.error('Error updating card', error);
@@ -43,8 +46,7 @@ const EditCards: React.FC<EditCardsProps> = ({ card }) => {
 
   return (
     <Box className='edit-cards-container'>
-      <Typography variant='h6'>Editing Card: {editedCard.id}</Typography>
-
+      <Typography variant='h6'>Editing Card: {editedCard._id}</Typography>
       <Box className='edit-cards-half'>
         <Typography variant='subtitle1'>Question:</Typography>
         <ReactQuill

@@ -13,7 +13,7 @@ type BrowseCardsProps = {
 };
 
 export type Card = {
-  id: string;
+  _id: string;
   question: string;
   answer: string;
   groupId: string;
