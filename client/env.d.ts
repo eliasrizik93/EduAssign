@@ -1,5 +1,5 @@
 declare namespace NodeJS {
-  interface ProcessEnv {
+  type ProcessEnv = {
     REACT_APP_SERVER_API: string;
-  }
+  };
 }
