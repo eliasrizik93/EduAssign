@@ -159,7 +159,7 @@ const GroupRow: React.FC<GroupProps> = ({
                     <GroupRow
                       group={subGroup}
                       level={level + 1}
-                      key={subGroup.id} // Add unique key here
+                      key={subGroup.id}
                       handleDeleteGroup={handleDeleteGroup}
                       moveGroup={moveGroup}
                       findGroup={findGroup}

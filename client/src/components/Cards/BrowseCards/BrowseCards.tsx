@@ -1,5 +1,5 @@
 import { Box, IconButton, Modal, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Group } from '../../GroupsCenter/GroupsCenter';
 import CloseIcon from '@mui/icons-material/Close';
 import CardsList from './CardsList/CardsList';
@@ -27,26 +27,50 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
 }) => {
   const [cardsList, setCardsList] = useState<Card[]>([]);
   const [choosenCard, setChoosenCard] = useState<Card | null>(null);
-
+  const fetchCards = useCallback(async () => {
+    const response = await axiosInstance.get<Card[]>('card', {
+      params: {
+        groupId: group.id,
+      },
+    });
+    const cardsList = response.data;
+    setCardsList(cardsList);
+  }, [group.id]);
   useEffect(() => {
-    const fetchCards = async () => {
-      const response = await axiosInstance.get<Card[]>('card', {
-        params: {
-          groupId: group.id,
-        },
-      });
-      const cardsList = response.data;
-      setCardsList(cardsList);
-    };
-    if (open && group) {
+    if (group) {
       fetchCards();
     }
-  }, [group, open]);
+    return () => {
+      setCardsList([]);
+      setChoosenCard(null);
+    };
+  }, [group, fetchCards]);
+
+  const handleDeleteCard = () => {
+    setChoosenCard(null);
+    fetchCards();
+  };
+  const handleCloseBrowseCards = () => {
+    handleClose();
+    setChoosenCard(null);
+  };
+
+  const handleUpdateCard = async (editedCard: Card) => {
+    try {
+      await axiosInstance.put(`/card/${editedCard._id}`, {
+        question: editedCard.question,
+        answer: editedCard.answer,
+      });
+      fetchCards();
+    } catch (error) {
+      console.error('Error updating card', error);
+    }
+  };
 
   return (
     <Modal
       open={open}
-      onClose={handleClose}
+      onClose={handleCloseBrowseCards}
       aria-labelledby='create-browse-modal-title'
       aria-describedby='create-browse-modal-description'
     >
@@ -79,7 +103,7 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
               Browse Cards
             </Typography>
             <IconButton
-              onClick={handleClose}
+              onClick={handleCloseBrowseCards}
               style={{ position: 'absolute', right: 0 }}
             >
               <CloseIcon />
@@ -109,6 +133,7 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
                 <CardsList
                   cardsList={cardsList}
                   handleChooseCard={setChoosenCard}
+                  handleDeleteCard={handleDeleteCard}
                 />
               </Box>
               <Box
@@ -118,7 +143,10 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
                   boxShadow: 3,
                 }}
               >
-                <EditCards card={choosenCard} />
+                <EditCards
+                  card={choosenCard}
+                  handleUpdateCard={handleUpdateCard}
+                />
               </Box>
             </Box>
           </div>

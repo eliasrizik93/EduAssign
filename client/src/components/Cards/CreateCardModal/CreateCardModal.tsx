@@ -1,19 +1,34 @@
-// CreateCardModal.tsx
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import ReactQuill from 'react-quill';
 import { Modal, Box, Button, Typography, IconButton } from '@mui/material';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import CloseIcon from '@mui/icons-material/Close';
 import './CreateCardModal.scss';
-import 'react-quill/dist/quill.snow.css'; // Import Quill styles
 import { Group } from '../../GroupsCenter/GroupsCenter';
 import { addCardToGroup } from '../../../redux/thunks/groupThunks';
 import { AppDispatch } from '../../../redux/store';
+import CustomQuill from '../../CustomQuill/CustomQuill';
 
 const quillModules = {
-  // Define your Quill modules here
+  toolbar: [
+    [{ header: '1' }, { header: '2' }, { font: [] }],
+    [{ size: [] }],
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [
+      { list: 'ordered' },
+      { list: 'bullet' },
+      { indent: '-1' },
+      { indent: '+1' },
+    ],
+    ['link', 'image', 'video'],
+    ['clean'],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
 };
+
 type CreateCardModalProps = {
   open: boolean;
   group: Group;
@@ -102,7 +117,7 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({
                 <Typography variant='h6' gutterBottom align='center'>
                   Question
                 </Typography>
-                <ReactQuill
+                <CustomQuill
                   className='quill-editor'
                   modules={quillModules}
                   theme='snow'
@@ -114,7 +129,7 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({
                 <Typography variant='h6' gutterBottom align='center'>
                   Answer
                 </Typography>
-                <ReactQuill
+                <CustomQuill
                   className='quill-editor'
                   modules={quillModules}
                   theme='snow'

@@ -47,19 +47,15 @@ export class CardService {
   }
 
   async update(id: string, updateCardDto: UpdateCardDto) {
-    console.log('Updating card with ID:', id);
-
     if (!id) {
       throw new Error('No ID provided');
     }
 
-    // Mongoose's findById method automatically handles converting string IDs to ObjectId, and throws if invalid
     const card = await this.cardModel.findById(id).exec();
     if (!card) {
       throw new NotFoundException(`Card with ID ${id} not found`);
     }
 
-    // Using the $set operator to ensure only provided fields are updated
     const updatedCard = await this.cardModel
       .findByIdAndUpdate(id, { $set: updateCardDto }, { new: true })
       .exec();
@@ -70,7 +66,7 @@ export class CardService {
     return updatedCard;
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<Group> {
     const result = await this.cardModel.findByIdAndDelete(id).exec();
     if (!result) {
       throw new NotFoundException(`Card with ID ${id} not found`);
@@ -80,7 +76,9 @@ export class CardService {
     if (group) {
       group.cards = group.cards.filter((cardId) => !cardId.equals(result._id));
       group.totalCards--;
+      group[result.state]--;
       await group.save();
+      return group;
     }
   }
 }

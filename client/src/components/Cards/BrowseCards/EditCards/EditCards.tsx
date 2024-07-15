@@ -7,13 +7,14 @@ import axiosInstance from '../../../../CustomApi/axiosInstance';
 
 type EditCardsProps = {
   card: Card | null;
+  handleUpdateCard: (card: Card) => void;
 };
 
 const quillModules = {
   // Define your Quill modules here
 };
 
-const EditCards: React.FC<EditCardsProps> = ({ card }) => {
+const EditCards: React.FC<EditCardsProps> = ({ card, handleUpdateCard }) => {
   const [editedCard, setEditedCard] = useState<Card | null>(card);
 
   useEffect(() => {
@@ -33,15 +34,7 @@ const EditCards: React.FC<EditCardsProps> = ({ card }) => {
   };
 
   const handleSave = async () => {
-    try {
-      await axiosInstance.put(`/card/${editedCard._id}`, {
-        question: editedCard.question,
-        answer: editedCard.answer,
-      });
-      console.log('Card updated successfully', editedCard);
-    } catch (error) {
-      console.error('Error updating card', error);
-    }
+    handleUpdateCard(editedCard);
   };
 
   return (

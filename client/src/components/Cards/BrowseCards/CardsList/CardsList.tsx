@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card } from '../BrowseCards';
-import './CardsList.scss';
 import {
   Table,
   TableBody,
@@ -11,21 +10,29 @@ import {
   Paper,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import axiosInstance from '../../../../CustomApi/axiosInstance';
+import DeleteCardModal from '../DeleteCardModal/DeleteCardModal';
 
 type CardsListProps = {
   cardsList: Card[];
   handleChooseCard: (card: Card) => void;
+  handleDeleteCard: () => void;
 };
 
 const CardsList: React.FC<CardsListProps> = ({
   cardsList,
   handleChooseCard,
+  handleDeleteCard,
 }) => {
-  const handleDelete = async (cardId: string, event: React.MouseEvent) => {
-    event.stopPropagation(); // Prevent triggering the row's onClick event
-    await axiosInstance.delete(`/card/${cardId}`);
-    // Optionally update state to reflect changes
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [currentCardId, setCurrentCardId] = useState<string | null>(null);
+
+  const handleOpenDeleteModal = (cardId: string) => {
+    setCurrentCardId(cardId);
+    setDeleteModalOpen(true);
+  };
+
+  const handleCloseDeleteModal = () => {
+    setDeleteModalOpen(false);
   };
 
   return (
@@ -36,28 +43,41 @@ const CardsList: React.FC<CardsListProps> = ({
             <TableRow
               key={card._id}
               onClick={() => handleChooseCard(card)}
+              sx={{
+                cursor: 'pointer',
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)', // Light grey color on hover
+                  '& .question-cell': {
+                    // Targeting the cell with class "question-cell"
+                    color: '#1976d2', // Changing text color on hover
+                    fontWeight: 'bold', // Making text bold on hover
+                  },
+                },
+              }}
               className='card-row'
             >
               <TableCell
                 component='th'
                 scope='row'
-                sx={{
-                  borderBottom: 'none', // Remove the bottom border
-                }}
+                className='question-cell'
+                sx={{ borderBottom: 'none' }}
               >
-                {card._id}
+                {card.question}
               </TableCell>
               <TableCell
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'flex-end', // Adjust as needed
-                  borderBottom: 'none', // Remove the bottom border
+                  justifyContent: 'flex-end',
+                  borderBottom: 'none',
                 }}
                 className='card-action'
               >
                 <IconButton
-                  onClick={(event) => handleDelete(card._id, event)}
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent click from triggering row's onClick
+                    handleOpenDeleteModal(card._id);
+                  }}
                   aria-label='delete'
                   size='small'
                 >
@@ -68,6 +88,14 @@ const CardsList: React.FC<CardsListProps> = ({
           ))}
         </TableBody>
       </Table>
+      {currentCardId && (
+        <DeleteCardModal
+          cardId={currentCardId}
+          open={deleteModalOpen}
+          handleClose={handleCloseDeleteModal}
+          handleDeleteCard={handleDeleteCard}
+        />
+      )}
     </TableContainer>
   );
 };

@@ -76,7 +76,7 @@ export const deleteGroup = createAsyncThunk(
   async (groupId: string, { rejectWithValue }) => {
     try {
       const response = await axiosInstance.delete(`/group/${groupId}`);
-      return response.data; // Return the updated list of groups
+      return response.data;
     } catch (error: any) {
       return rejectWithValue(
         error.response?.data?.message ||

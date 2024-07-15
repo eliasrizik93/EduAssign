@@ -77,6 +77,7 @@ const groupSlice = createSlice({
         state.loading = false;
         state.error = action.error.message || 'Failed to delete group';
       })
+
       .addCase(moveGroups.pending, (state) => {
         state.loading = true;
         state.error = null;
