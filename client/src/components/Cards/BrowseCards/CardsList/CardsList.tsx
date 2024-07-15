@@ -35,19 +35,31 @@ const CardsList: React.FC<CardsListProps> = ({
           {cardsList.map((card) => (
             <TableRow
               key={card._id}
-              hover
               onClick={() => handleChooseCard(card)}
               className='card-row'
             >
-              <TableCell component='th' scope='row'>
+              <TableCell
+                component='th'
+                scope='row'
+                sx={{
+                  borderBottom: 'none', // Remove the bottom border
+                }}
+              >
                 {card._id}
               </TableCell>
-              <TableCell align='right'>
+              <TableCell
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end', // Adjust as needed
+                  borderBottom: 'none', // Remove the bottom border
+                }}
+                className='card-action'
+              >
                 <IconButton
                   onClick={(event) => handleDelete(card._id, event)}
                   aria-label='delete'
                   size='small'
-                  style={{ marginRight: 10 }} // Adds a bit of space on the right
                 >
                   <DeleteIcon />
                 </IconButton>

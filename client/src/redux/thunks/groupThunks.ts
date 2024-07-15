@@ -44,6 +44,32 @@ export const addGroup = createAsyncThunk(
   }
 );
 
+// Add card to group
+export const addCardToGroup = createAsyncThunk(
+  'groups/addCardToGroup',
+  async (
+    {
+      groupId,
+      card,
+    }: { groupId: string; card: { question: string; answer: string } },
+    { rejectWithValue }
+  ) => {
+    try {
+      const response = await axiosInstance.post(`/card`, {
+        ...card,
+        groupId,
+      });
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.response?.data?.message ||
+          error.message ||
+          'Failed to add card to group'
+      );
+    }
+  }
+);
+
 // Delete group
 export const deleteGroup = createAsyncThunk(
   'groups/deleteGroup',

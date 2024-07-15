@@ -13,7 +13,7 @@ export class CardService {
     @InjectModel(Group.name) private readonly groupModel: Model<Group>,
   ) {}
 
-  async create(createCardDto: CreateCardDto) {
+  async create(createCardDto: CreateCardDto): Promise<Group> {
     try {
       const createCard = new this.cardModel(createCardDto);
       await createCard.save();
@@ -30,8 +30,10 @@ export class CardService {
       group.new += 1;
       await group.save();
 
-      return createCard;
+      return group;
     } catch (error) {
+      console.error('Error creating card:', error.message);
+      console.error('Error details:', error);
       throw new Error(`Failed to create card: ${error.message}`);
     }
   }

@@ -38,8 +38,10 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
       const cardsList = response.data;
       setCardsList(cardsList);
     };
-    fetchCards();
-  }, [group]);
+    if (open && group) {
+      fetchCards();
+    }
+  }, [group, open]);
 
   return (
     <Modal

@@ -1,17 +1,19 @@
+// CreateCardModal.tsx
 import React, { useState } from 'react';
-import './CreateCardModal.scss';
+import { useDispatch } from 'react-redux';
 import ReactQuill from 'react-quill';
 import { Modal, Box, Button, Typography, IconButton } from '@mui/material';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import CloseIcon from '@mui/icons-material/Close';
+import './CreateCardModal.scss';
 import 'react-quill/dist/quill.snow.css'; // Import Quill styles
-import axios from 'axios';
 import { Group } from '../../GroupsCenter/GroupsCenter';
+import { addCardToGroup } from '../../../redux/thunks/groupThunks';
+import { AppDispatch } from '../../../redux/store';
 
 const quillModules = {
   // Define your Quill modules here
 };
-
 type CreateCardModalProps = {
   open: boolean;
   group: Group;
@@ -23,8 +25,9 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({
   group,
   handleClose,
 }) => {
-  const [questionValue, setQuestionValue] = useState<string>('');
-  const [answerValue, setAnswerValue] = useState<string>('');
+  const dispatch = useDispatch<AppDispatch>();
+  const [questionValue, setQuestionValue] = useState('');
+  const [answerValue, setAnswerValue] = useState('');
 
   const handleSetQuestion = (content: string) => {
     setQuestionValue(content);
@@ -39,28 +42,10 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({
       return;
     }
 
-    try {
-      const response = await axios.post(
-        'http://localhost:3002/card',
-        {
-          question: questionValue,
-          answer: answerValue,
-          groupId: group.id,
-        },
-        {
-          withCredentials: true, // Ensure cookies are sent with the request
-        }
-      );
-      const data = response.data;
+    const card = { question: questionValue, answer: answerValue };
 
-      if (response.status === 201) {
-        console.log('Card created successfully:', data);
-      } else {
-        console.error('Creation error:', data);
-      }
-    } catch (error) {
-      console.error('Request error:', error);
-    }
+    await dispatch(addCardToGroup({ groupId: group.id, card }));
+
     setQuestionValue('');
     setAnswerValue('');
     handleClose();

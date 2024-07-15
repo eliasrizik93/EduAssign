@@ -1,9 +1,11 @@
+// slices/groupSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   addGroup,
   deleteGroup,
   fetchGroups,
   moveGroups,
+  addCardToGroup,
 } from '../thunks/groupThunks';
 
 export type Group = {
@@ -86,6 +88,15 @@ const groupSlice = createSlice({
       .addCase(moveGroups.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(addCardToGroup.fulfilled, (state, action) => {
+        const updatedGroup = action.payload?.data;
+        state.groups = state.groups.map((group) => {
+          return group.id === updatedGroup.id ? updatedGroup : group;
+        });
+      })
+      .addCase(addCardToGroup.rejected, (state, action) => {
+        state.error = action.error.message || 'Failed to add card to group';
       });
   },
 });
