@@ -15,6 +15,15 @@ export class Card extends Document {
   @Prop({ default: 'new' })
   state: 'new' | 'inProgress' | 'restudy';
 
+  @Prop({ default: 2.5 })
+  easinessFactor: number;
+
+  @Prop({ default: 1 })
+  interval: number;
+
+  @Prop({ default: 0 })
+  repetitions: number;
+
   @Prop({ default: Date.now })
   createdAt: Date;
 

@@ -7,6 +7,7 @@ import PrivateRoute from './Components/route/PrivateRoute';
 import MessagesPage from './Components/Messages/MessagesPage';
 import GroupDetails from './Components/GroupsCenter/GroupDetails';
 import GroupsCenter from './Components/GroupsCenter';
+import StudyCards from './Components/Cards/StudyCards/StudyCards';
 
 const App: React.FC = () => {
   const homePaths = ['', '/', '/home'];
@@ -22,6 +23,7 @@ const App: React.FC = () => {
           ))}
           <Route path='/groups' element={<GroupsCenter />} />
           <Route path='/groups/:id' element={<GroupDetails />} />
+          <Route path='/groups/:id/cards' element={<StudyCards />} />
         </Route>
       </Routes>
     </>

@@ -15,6 +15,7 @@ import { CardService } from './card.service';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { JwtAuthGuard } from 'src/user/guards/jwt-auth.guard';
+import { Card } from './schemas/card.schema';
 
 @Controller('card')
 @UseGuards(JwtAuthGuard)
@@ -53,6 +54,14 @@ export class CardController {
   @Put(':id')
   update(@Param('id') id: string, @Body() updateCardDto: UpdateCardDto) {
     return this.cardService.update(id, updateCardDto);
+  }
+
+  @Put(':id/review')
+  async reviewCard(
+    @Param('id') id: string,
+    @Body('performanceRating') performanceRating: number,
+  ): Promise<Card> {
+    return this.cardService.reviewCard(id, performanceRating);
   }
 
   @Delete(':id')

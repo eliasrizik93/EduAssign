@@ -48,6 +48,10 @@ const GroupDetails: React.FC = () => {
     setIsBrowseModalOpen(false);
   };
 
+  const handleStudyCardsButton = () => {
+    navigate(`/groups/${id}/cards`);
+  };
+
   return (
     <Box display='flex' flexDirection='column' alignItems='center'>
       <Box
@@ -95,6 +99,14 @@ const GroupDetails: React.FC = () => {
           onClick={handleOpenBrowseModal}
         >
           Browse Cards
+        </Button>
+        <Button
+          variant='contained'
+          color='primary'
+          onClick={handleStudyCardsButton}
+          style={{ marginLeft: '10px' }}
+        >
+          Study Cards
         </Button>
       </Box>
     </Box>

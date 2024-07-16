@@ -38,6 +38,31 @@ export class CardService {
     }
   }
 
+  async reviewCard(id: string, performanceRating: number): Promise<Card> {
+    const card = await this.cardModel.findById(id);
+    if (!card) {
+      throw new NotFoundException(`Card with ID ${id} not found`);
+    }
+
+    card.repetitions = performanceRating >= 3 ? card.repetitions + 1 : 0;
+    card.easinessFactor = Math.max(
+      1.3,
+      card.easinessFactor -
+        0.8 +
+        0.28 * performanceRating -
+        0.02 * performanceRating * performanceRating,
+    );
+    card.interval =
+      card.repetitions <= 1
+        ? 1
+        : card.repetitions === 2
+        ? 6
+        : Math.ceil(card.interval * card.easinessFactor);
+
+    await card.save();
+    return card;
+  }
+
   findByGroupId(groupId: string): Promise<Card[]> {
     return this.cardModel.find({ groupId: new Types.ObjectId(groupId) }).exec();
   }
