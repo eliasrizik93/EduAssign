@@ -72,7 +72,11 @@ const StudyCards = () => {
   const handleRateCard = async (rating: number) => {
     const currentCard = cardsList[currentCardIndex];
     try {
-      await reviewCard(currentCard._id, rating);
+      const updatedCard = await reviewCard(currentCard._id, rating);
+      const updatedCardsList = cardsList.map((card) =>
+        card._id === currentCard._id ? updatedCard : card
+      );
+      setCardsList(updatedCardsList);
       handleNextCard();
     } catch (error) {
       console.error('Failed to rate card:', error);
@@ -90,7 +94,12 @@ const StudyCards = () => {
   const currentCard = cardsList[currentCardIndex];
 
   return (
-    <Box display='flex' flexDirection='column' alignItems='center'>
+    <Box
+      display='flex'
+      flexDirection='column'
+      alignItems='center'
+      height='100%'
+    >
       <Box
         display='flex'
         alignItems='center'
@@ -110,65 +119,72 @@ const StudyCards = () => {
           <Typography variant='body1'>{parse(currentCard.answer)}</Typography>
         )}
       </Box>
-
-      <Box display='flex' justifyContent='center' mt={2}>
-        {!showAnswer && (
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={handleShowAnswer}
-            style={{ marginRight: '10px' }}
-          >
-            Show Answer
-          </Button>
-        )}
-        {showAnswer && (
-          <>
+      <Box
+        display='flex'
+        flexDirection='column'
+        alignItems='center'
+        mt={2}
+        height='70%'
+      >
+        <Box display='flex' justifyContent='center' mt={'auto'}>
+          {!showAnswer && (
             <Button
               variant='contained'
               color='primary'
-              style={{ marginRight: '10px' }}
-              onClick={() => handleRateCard(0)}
-            >
-              Hard
-            </Button>
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={() => handleRateCard(1)}
+              onClick={handleShowAnswer}
               style={{ marginRight: '10px' }}
             >
-              Medium
+              Show Answer
             </Button>
-            <Button
-              variant='contained'
-              color='primary'
-              onClick={() => handleRateCard(2)}
-            >
-              Easy
-            </Button>
-          </>
-        )}
-      </Box>
+          )}
+          {showAnswer && (
+            <>
+              <Button
+                variant='contained'
+                color='error'
+                style={{ marginRight: '10px' }}
+                onClick={() => handleRateCard(0)}
+              >
+                Repeat
+              </Button>
+              <Button
+                variant='contained'
+                color='warning'
+                onClick={() => handleRateCard(1)}
+                style={{ marginRight: '10px' }}
+              >
+                Hard
+              </Button>
+              <Button
+                variant='contained'
+                color='primary'
+                onClick={() => handleRateCard(2)}
+              >
+                Easy
+              </Button>
+            </>
+          )}
+        </Box>
 
-      <Box display='flex' justifyContent='center' alignItems='center' mt={2}>
-        <Box mx={2} textAlign='center'>
-          <Typography variant='subtitle1' color='textSecondary'>
-            New:
-          </Typography>
-          <Typography variant='h6'>{group.new}</Typography>
-        </Box>
-        <Box mx={2} textAlign='center'>
-          <Typography variant='subtitle1' color='textSecondary'>
-            Mistake:
-          </Typography>
-          <Typography variant='h6'>{group.inProgress}</Typography>
-        </Box>
-        <Box mx={2} textAlign='center'>
-          <Typography variant='subtitle1' color='textSecondary'>
-            Repeat:
-          </Typography>
-          <Typography variant='h6'>{group.studied}</Typography>
+        <Box display='flex' justifyContent='center' alignItems='center' mt={2}>
+          <Box mx={2} textAlign='center'>
+            <Typography variant='subtitle1' color='textSecondary'>
+              New:
+            </Typography>
+            <Typography variant='h6'>{group.new}</Typography>
+          </Box>
+          <Box mx={2} textAlign='center'>
+            <Typography variant='subtitle1' color='textSecondary'>
+              In Progress:
+            </Typography>
+            <Typography variant='h6'>{group.inProgress}</Typography>
+          </Box>
+          <Box mx={2} textAlign='center'>
+            <Typography variant='subtitle1' color='textSecondary'>
+              studied:
+            </Typography>
+            <Typography variant='h6'>{group.studied}</Typography>
+          </Box>
         </Box>
       </Box>
     </Box>

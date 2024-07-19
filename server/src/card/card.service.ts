@@ -39,14 +39,28 @@ export class CardService {
   }
 
   async reviewCard(id: string, performanceRating: number): Promise<Card> {
-    const card = await this.cardModel.findById(id);
+    const card = await this.cardModel.findById(id).exec();
     if (!card) {
       throw new NotFoundException(`Card with ID ${id} not found`);
     }
 
+    // Save previous state for updating group counters later
+    const previousState = card.state;
+
+    // Apply SM-2 algorithm which also updates the card state
     this.applySm2Algorithm(card, performanceRating);
 
     await card.save();
+    const group = await this.groupModel.findById(card.groupId);
+    // Update group counters
+    if (group) {
+      if (previousState !== card.state) {
+        group[previousState]--;
+        group[card.state]++;
+        await group.save();
+      }
+    }
+
     return card;
   }
 
@@ -54,15 +68,19 @@ export class CardService {
     if (q >= 1) {
       if (card.repetitions === 0) {
         card.interval = 1;
+        card.state = 'inProgress';
       } else if (card.repetitions === 1) {
         card.interval = 6;
+        card.state = 'restudy';
       } else {
         card.interval = Math.round(card.interval * card.easeFactor);
+        card.state = 'restudy';
       }
       card.repetitions += 1;
     } else {
       card.repetitions = 0;
       card.interval = 1;
+      card.state = 'inProgress';
     }
 
     const changeToEF = [-0.8, -0.14, 0.1];
