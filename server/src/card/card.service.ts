@@ -44,23 +44,30 @@ export class CardService {
       throw new NotFoundException(`Card with ID ${id} not found`);
     }
 
-    card.repetitions = performanceRating >= 3 ? card.repetitions + 1 : 0;
-    card.easinessFactor = Math.max(
-      1.3,
-      card.easinessFactor -
-        0.8 +
-        0.28 * performanceRating -
-        0.02 * performanceRating * performanceRating,
-    );
-    card.interval =
-      card.repetitions <= 1
-        ? 1
-        : card.repetitions === 2
-        ? 6
-        : Math.ceil(card.interval * card.easinessFactor);
+    this.applySm2Algorithm(card, performanceRating);
 
     await card.save();
     return card;
+  }
+
+  private applySm2Algorithm(card: Card, q: number): void {
+    if (q >= 1) {
+      if (card.repetitions === 0) {
+        card.interval = 1;
+      } else if (card.repetitions === 1) {
+        card.interval = 6;
+      } else {
+        card.interval = Math.round(card.interval * card.easeFactor);
+      }
+      card.repetitions += 1;
+    } else {
+      card.repetitions = 0;
+      card.interval = 1;
+    }
+
+    const changeToEF = [-0.8, -0.14, 0.1];
+    card.easeFactor = Math.max(1.3, card.easeFactor + changeToEF[q]);
+    card.dueDate = new Date(Date.now() + card.interval * 24 * 60 * 60 * 1000);
   }
 
   findByGroupId(groupId: string): Promise<Card[]> {

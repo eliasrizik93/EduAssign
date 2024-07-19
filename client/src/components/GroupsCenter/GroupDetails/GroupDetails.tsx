@@ -49,7 +49,7 @@ const GroupDetails: React.FC = () => {
   };
 
   const handleStudyCardsButton = () => {
-    navigate(`/groups/${id}/cards`);
+    navigate(`/groups/${id}/cards`, { state: { group: group } });
   };
 
   return (

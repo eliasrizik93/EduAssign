@@ -16,13 +16,16 @@ export class Card extends Document {
   state: 'new' | 'inProgress' | 'restudy';
 
   @Prop({ default: 2.5 })
-  easinessFactor: number;
+  easeFactor: number;
 
   @Prop({ default: 1 })
   interval: number;
 
   @Prop({ default: 0 })
   repetitions: number;
+
+  @Prop({ default: Date.now })
+  dueDate: Date;
 
   @Prop({ default: Date.now })
   createdAt: Date;

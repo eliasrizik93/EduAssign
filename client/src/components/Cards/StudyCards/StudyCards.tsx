@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Box, IconButton, Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axiosInstance from '../../../CustomApi/axiosInstance';
-import { Card as CardType } from '../BrowseCards/BrowseCards'; // Rename to avoid conflict with HTML element
+import { Card as CardType } from '../BrowseCards/BrowseCards';
 import parse from 'html-react-parser';
+import { Label } from '@mui/icons-material';
 
 const StudyCards = () => {
   const [cardsList, setCardsList] = useState<CardType[]>([]);
-  const [currentCardIndex, setCurrentCardIndex] = useState(0); // Track current card index
+  const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const navigate = useNavigate();
-  const { id: groupId } = useParams();
+  const location = useLocation();
+  const { group } = location.state || {};
 
   useEffect(() => {
+    if (!group) {
+      console.error('Group data is missing.');
+      return;
+    }
     const fetchCards = async () => {
       try {
-        const response = await axiosInstance.get<CardType[]>('card', {
-          params: {
-            groupId: groupId,
-          },
-        });
-        const cardsList = response.data;
+        const cardsList = await getDueCards(group.id);
         setCardsList(cardsList);
       } catch (error) {
         console.error('Failed to fetch cards:', error);
@@ -32,7 +33,26 @@ const StudyCards = () => {
     return () => {
       setCardsList([]);
     };
-  }, [groupId]);
+  }, [group]);
+
+  const getDueCards = async (groupId: string): Promise<CardType[]> => {
+    const response = await axiosInstance.get<CardType[]>('/card', {
+      params: {
+        groupId: groupId,
+      },
+    });
+    return response.data;
+  };
+
+  const reviewCard = async (
+    cardId: string,
+    performanceRating: number
+  ): Promise<CardType> => {
+    const response = await axiosInstance.put(`/card/${cardId}/review`, {
+      performanceRating,
+    });
+    return response.data;
+  };
 
   const handleBack = () => {
     navigate(-1);
@@ -45,13 +65,6 @@ const StudyCards = () => {
     }
   };
 
-  const handlePrevCard = () => {
-    if (currentCardIndex > 0) {
-      setCurrentCardIndex(currentCardIndex - 1);
-      setShowAnswer(false);
-    }
-  };
-
   const handleShowAnswer = () => {
     setShowAnswer(true);
   };
@@ -59,14 +72,16 @@ const StudyCards = () => {
   const handleRateCard = async (rating: number) => {
     const currentCard = cardsList[currentCardIndex];
     try {
-      await axiosInstance.put(`card/${currentCard._id}/review`, {
-        performanceRating: rating,
-      });
+      await reviewCard(currentCard._id, rating);
       handleNextCard();
     } catch (error) {
       console.error('Failed to rate card:', error);
     }
   };
+
+  if (!group) {
+    return <div>Error: Group data is missing.</div>;
+  }
 
   if (cardsList.length === 0) {
     return <div>Loading...</div>;
@@ -112,15 +127,15 @@ const StudyCards = () => {
             <Button
               variant='contained'
               color='primary'
-              onClick={() => handleRateCard(5)}
               style={{ marginRight: '10px' }}
+              onClick={() => handleRateCard(0)}
             >
-              Easy
+              Hard
             </Button>
             <Button
               variant='contained'
               color='primary'
-              onClick={() => handleRateCard(3)}
+              onClick={() => handleRateCard(1)}
               style={{ marginRight: '10px' }}
             >
               Medium
@@ -128,32 +143,33 @@ const StudyCards = () => {
             <Button
               variant='contained'
               color='primary'
-              onClick={() => handleRateCard(1)}
+              onClick={() => handleRateCard(2)}
             >
-              Hard
+              Easy
             </Button>
           </>
         )}
       </Box>
 
-      <Box display='flex' justifyContent='center' mt={2}>
-        <Button
-          variant='contained'
-          color='primary'
-          onClick={handlePrevCard}
-          disabled={currentCardIndex === 0}
-          style={{ marginRight: '10px' }}
-        >
-          Previous
-        </Button>
-        <Button
-          variant='contained'
-          color='primary'
-          onClick={handleNextCard}
-          disabled={currentCardIndex === cardsList.length - 1}
-        >
-          Next
-        </Button>
+      <Box display='flex' justifyContent='center' alignItems='center' mt={2}>
+        <Box mx={2} textAlign='center'>
+          <Typography variant='subtitle1' color='textSecondary'>
+            New:
+          </Typography>
+          <Typography variant='h6'>{group.new}</Typography>
+        </Box>
+        <Box mx={2} textAlign='center'>
+          <Typography variant='subtitle1' color='textSecondary'>
+            Mistake:
+          </Typography>
+          <Typography variant='h6'>{group.inProgress}</Typography>
+        </Box>
+        <Box mx={2} textAlign='center'>
+          <Typography variant='subtitle1' color='textSecondary'>
+            Repeat:
+          </Typography>
+          <Typography variant='h6'>{group.studied}</Typography>
+        </Box>
       </Box>
     </Box>
   );
