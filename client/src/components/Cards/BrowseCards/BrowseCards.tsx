@@ -26,33 +26,37 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
   group,
 }) => {
   const [cardsList, setCardsList] = useState<Card[]>([]);
-  const [choosenCard, setChoosenCard] = useState<Card | null>(null);
+  const [chosenCard, setChosenCard] = useState<Card | null>(null);
+
   const fetchCards = useCallback(async () => {
-    const response = await axiosInstance.get<Card[]>('card', {
-      params: {
-        groupId: group.id,
-      },
-    });
-    const cardsList = response.data;
-    setCardsList(cardsList);
+    try {
+      const response = await axiosInstance.get<Card[]>('card', {
+        params: { groupId: group.id },
+      });
+      setCardsList(response.data);
+    } catch (error) {
+      console.error('Error fetching cards', error);
+    }
   }, [group.id]);
+
   useEffect(() => {
     if (group) {
       fetchCards();
     }
     return () => {
       setCardsList([]);
-      setChoosenCard(null);
+      setChosenCard(null);
     };
   }, [group, fetchCards]);
 
   const handleDeleteCard = () => {
-    setChoosenCard(null);
+    setChosenCard(null);
     fetchCards();
   };
+
   const handleCloseBrowseCards = () => {
     handleClose();
-    setChoosenCard(null);
+    setChosenCard(null);
   };
 
   const handleUpdateCard = async (editedCard: Card) => {
@@ -109,9 +113,9 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
               <CloseIcon />
             </IconButton>
           </Box>
-          <div
+          <Box
             className='browse-modal-container'
-            style={{ flex: 1, overflowY: 'auto' }}
+            sx={{ flex: 1, overflowY: 'auto' }}
           >
             <Box
               sx={{
@@ -132,7 +136,7 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
               >
                 <CardsList
                   cardsList={cardsList}
-                  handleChooseCard={setChoosenCard}
+                  handleChooseCard={setChosenCard}
                   handleDeleteCard={handleDeleteCard}
                 />
               </Box>
@@ -144,12 +148,12 @@ const BrowseCards: React.FC<BrowseCardsProps> = ({
                 }}
               >
                 <EditCards
-                  card={choosenCard}
+                  card={chosenCard}
                   handleUpdateCard={handleUpdateCard}
                 />
               </Box>
             </Box>
-          </div>
+          </Box>
         </Box>
       </Box>
     </Modal>

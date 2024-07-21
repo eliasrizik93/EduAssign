@@ -31,26 +31,15 @@ const GroupDetails: React.FC = () => {
     return <div>Loading...</div>;
   }
 
-  const handleBack = () => {
-    navigate(-1);
-  };
+  const handleBack = () => navigate(-1);
 
-  const handleOpenCardModal = () => {
-    setIsCardModalOpen(true);
-  };
-  const handleOpenBrowseModal = () => {
-    setIsBrowseModalOpen(true);
-  };
-  const handleCardCloseModal = () => {
-    setIsCardModalOpen(false);
-  };
-  const handleBrowseCloseModal = () => {
-    setIsBrowseModalOpen(false);
-  };
+  const handleOpenCardModal = () => setIsCardModalOpen(true);
+  const handleOpenBrowseModal = () => setIsBrowseModalOpen(true);
+  const handleCardCloseModal = () => setIsCardModalOpen(false);
+  const handleBrowseCloseModal = () => setIsBrowseModalOpen(false);
 
-  const handleStudyCardsButton = () => {
+  const handleStudyCardsButton = () =>
     navigate(`/groups/${id}/cards`, { state: { group: group } });
-  };
 
   return (
     <Box display='flex' flexDirection='column' alignItems='center'>

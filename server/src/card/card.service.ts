@@ -44,15 +44,11 @@ export class CardService {
       throw new NotFoundException(`Card with ID ${id} not found`);
     }
 
-    // Save previous state for updating group counters later
     const previousState = card.state;
-
-    // Apply SM-2 algorithm which also updates the card state
     this.applySm2Algorithm(card, performanceRating);
 
     await card.save();
     const group = await this.groupModel.findById(card.groupId);
-    // Update group counters
     if (group) {
       if (previousState !== card.state) {
         group[previousState]--;
